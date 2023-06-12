@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1 minimum-scale=1 maximum-scale=1 user-scalable=no" />
+    <link rel="stylesheet" href="./assets/css/style.css" type="text/css" />
+    <title>统一认证平台</title>
+</head>
+
+<body>
+<div class="bottom-container">
+</div>
+<!-- <div th:if="${error}" class="alert" id="alert">
+    <div class="error-alert">
+        <img src="./image/logo.png" alt="logo" width="30">
+        <div th:text="${error}">
+
+        </div>
+    </div>
+</div> -->
+<div id="error_box">
+</div>
+<div class="form-container">
+
+    <form class="form-signin" method="post" th:action="@{/login}">
+        <!-- <div th:if="${param.error}" class="alert alert-danger" role="alert" th:text="${param}">
+       Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success" role="alert">
+        你已经登出成功.
+    </div> -->
+
+        <!--        <div class="text-placeholder" style="padding-bottom: 20px;">-->
+        <!--            平台登录-->
+        <!--        </div>-->
+        <div class="welcome-text">
+            <img src="./assets/img/logo.png" alt="logo" width="60">
+            <span>
+                    统一认证平台
+                </span>
+        </div>
+        <div>
+            <input type="text" id="username" name="username" class="form-control" placeholder="手机 / 邮箱" required
+                   autofocus onblur="leave()" />
+        </div>
+        <div>
+            <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required
+                   onblur="leave()" />
+        </div>
+        <div class="code-container">
+            <input type="text" id="code" name="code" class="form-control" placeholder="请输入验证码" required
+                   onblur="leave()" />
+            <img src="" id="code-image" onclick="getVerifyCode()" />
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登&nbsp;&nbsp;&nbsp;&nbsp;录</button>
+        <!--<a class="btn btn-light btn-block bg-white" href="/oauth2/authorization/gitee" role="link" style="text-transform: none;">
+        Sign in with Gitee
+    </a>-->
+<!--        <div class="text-placeholder">-->
+<!--            第三方登录-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <a class="btn btn-light btn-block bg-white" href="/oauth2/authorization/github-idp" role="link"-->
+<!--               style="text-transform: none;">-->
+<!--                <img width="24" style="margin-right: 5px;" alt="Sign in with GitHub"-->
+<!--                     src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" />-->
+<!--                Github-->
+<!--            </a>-->
+<!--        </div>-->
+    </form>
+</div>
+</body>
+
+</html>
+<script>
+    function leave() {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+    }
+
+    function getVerifyCode() {
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch(`${window.location.origin}/getCaptcha`, requestOptions)
+            .then(response => response.text())
+            .then(r => {
+                if (r) {
+                    let result = JSON.parse(r);
+                    document.getElementById('code-image').src = result.data
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    getVerifyCode();
+</script>
+<script th:inline="javascript">
+
+    function showError(message) {
+        let errorBox = document.getElementById("error_box");
+        errorBox.innerHTML = message;
+        errorBox.style.display = "block";
+    }
+    function closeError() {
+        let errorBox = document.getElementById("error_box");
+        errorBox.style.display = "none";
+    }
+
+    let error = [[${ error }]]
+    if (error) {
+        if (window.Notification) {
+            Notification.requestPermission(function () {
+                if (Notification.permission === 'granted') {
+                    // 用户点击了允许
+                    let n = new Notification('登录失败', {
+                        body: error,
+                        icon: './assets/img/logo.png'
+                    })
+
+                    setTimeout(() => {
+                        n.close();
+                    }, 3000)
+                } else {
+                    showError(error);
+                    setTimeout(() => {
+                        closeError();
+                    }, 3000)
+                }
+            })
+        }
+    }
+</script>

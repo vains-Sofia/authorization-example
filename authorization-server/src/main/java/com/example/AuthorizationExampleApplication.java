@@ -1,0 +1,1 @@
+package com.example;import org.springframework.boot.SpringApplication;import org.springframework.boot.autoconfigure.SpringBootApplication;/** * 认证服务启动类 * * @author vains */@SpringBootApplicationpublic class AuthorizationExampleApplication {    public static void main(String[] args) {        SpringApplication.run(AuthorizationExampleApplication.class, args);    }}
