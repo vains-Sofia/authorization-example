@@ -28,7 +28,9 @@
 authorization-example # 最外层目录
  │  README.md # 项目描述文件
  │  
- └─authorization-server # 认证服务器
+ ├─authorization-server # 认证服务器
+ │  
+ └─authorization-client-example # 客户端集成示例
 ```
 
 ## 文章地址
