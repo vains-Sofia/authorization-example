@@ -30,7 +30,9 @@ authorization-example # 最外层目录
  │  
  ├─authorization-server # 认证服务器
  │  
- └─authorization-client-example # 客户端集成示例
+ ├─authorization-client-example # 客户端集成示例
+ │  
+ └─resource-server-example # Resource Server集成示例
 ```
 
 ## 文章地址
