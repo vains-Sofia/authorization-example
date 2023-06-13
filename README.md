@@ -41,7 +41,9 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (四) 自定义设备码授权](https://juejin.cn/post/7241101553712283707)**<br>
 **[Spring Authorization Server入门 (五) 自定义异常响应配置](https://juejin.cn/post/7241439405970063416)**<br>
 **[Spring Authorization Server入门 (六) 自定义JWT中携带的claims与资源服务jwt解析器](https://juejin.cn/post/7241762957570097213)**<br>
-**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://juejin.cn/post/7242476048005709879)**
+**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://juejin.cn/post/7242476048005709879)**<br>
+**[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://juejin.cn/spost/7243725197911834683)**<br>
+**[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://juejin.cn/spost/7244043482772029498)**<br>
 
 ### CSDN
 
@@ -51,4 +53,6 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (四) 自定义设备码授权](https://blog.csdn.net/weixin_43356507/article/details/131050408)**<br>
 **[Spring Authorization Server入门 (五) 自定义异常响应配置](https://blog.csdn.net/weixin_43356507/article/details/131063392)**<br>
 **[Spring Authorization Server入门 (六) 自定义JWT中携带的claims与资源服务jwt解析器](https://blog.csdn.net/weixin_43356507/article/details/131081862)**<br>
-**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://blog.csdn.net/weixin_43356507/article/details/131109818)**
+**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://blog.csdn.net/weixin_43356507/article/details/131109818)**<br>
+**[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131173945)**<br>
+**[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131190785)**<br>
