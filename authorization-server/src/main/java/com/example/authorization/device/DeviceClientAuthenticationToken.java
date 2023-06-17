@@ -1,4 +1,4 @@
-package com.example.authorization;
+package com.example.authorization.device;
 
 import java.util.Map;
 

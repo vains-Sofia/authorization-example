@@ -1,4 +1,4 @@
-package com.example.authorization;
+package com.example.authorization.device;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
