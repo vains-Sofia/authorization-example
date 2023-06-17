@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport"
-          content="width=device-width, initial-scale=1 minimum-scale=1 maximum-scale=1 user-scalable=no" />
-    <link rel="stylesheet" href="./assets/css/style.css" type="text/css" />
+          content="width=device-width, initial-scale=1 minimum-scale=1 maximum-scale=1 user-scalable=no"/>
+    <link rel="stylesheet" href="./assets/css/style.css" type="text/css"/>
     <title>统一认证平台</title>
 </head>
 
@@ -14,24 +14,25 @@
 <div class="bottom-container">
 </div>
 <!-- <div th:if="${error}" class="alert" id="alert">
-    <div class="error-alert">
-        <img src="./image/logo.png" alt="logo" width="30">
-        <div th:text="${error}">
+<div class="error-alert">
+<img src="./image/logo.png" alt="logo" width="30">
+<div th:text="${error}">
 
-        </div>
-    </div>
+</div>
+</div>
 </div> -->
 <div id="error_box">
 </div>
 <div class="form-container">
 
     <form class="form-signin" method="post" th:action="@{/login}">
+        <input type="hidden" id="loginType" name="loginType" value="passwordLogin"/>
         <!-- <div th:if="${param.error}" class="alert alert-danger" role="alert" th:text="${param}">
-       Invalid username or password.
-    </div>
-    <div th:if="${param.logout}" class="alert alert-success" role="alert">
-        你已经登出成功.
-    </div> -->
+Invalid username or password.
+</div>
+<div th:if="${param.logout}" class="alert alert-success" role="alert">
+你已经登出成功.
+</div> -->
 
         <!--        <div class="text-placeholder" style="padding-bottom: 20px;">-->
         <!--            平台登录-->
@@ -43,39 +44,95 @@
                 </span>
         </div>
         <div>
-            <input type="text" id="username" name="username" class="form-control" placeholder="手机 / 邮箱" required
-                   autofocus onblur="leave()" />
+            <input type="text" id="username" name="username" class="form-control" placeholder="手机 / 邮箱"
+                   autofocus onblur="leave()"/>
         </div>
-        <div>
-            <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required
-                   onblur="leave()" />
+        <div id="passContainer">
+            <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码"
+                   onblur="leave()"/>
         </div>
-        <div class="code-container">
-            <input type="text" id="code" name="code" class="form-control" placeholder="请输入验证码" required
-                   onblur="leave()" />
-            <img src="" id="code-image" onclick="getVerifyCode()" />
+        <div class="code-container" id="codeContainer">
+            <input type="text" id="code" name="code" class="form-control" placeholder="请输入验证码"
+                   onblur="leave()"/>
+            <img src="" id="code-image" onclick="getVerifyCode()"/>
+        </div>
+        <div style="display: none; margin-bottom: 0" class="code-container" id="smsContainer">
+            <input type="text" name="" class="form-control" placeholder="请输入验证码" onblur="leave()"/>
+            <a id="getSmsCaptchaBtn" class="btn btn-light btn-block bg-white getCaptcha"
+               href="javascript:getSmsCaptcha()">获取验证码</a>
+        </div>
+        <div class="change-login-type">
+            <div></div>
+            <a id="changeLoginType" href="javascript:showSmsCaptchaPage()">短信验证登录</a>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">登&nbsp;&nbsp;&nbsp;&nbsp;录</button>
         <!--<a class="btn btn-light btn-block bg-white" href="/oauth2/authorization/gitee" role="link" style="text-transform: none;">
-        Sign in with Gitee
-    </a>-->
-<!--        <div class="text-placeholder">-->
-<!--            第三方登录-->
-<!--        </div>-->
-<!--        <div>-->
-<!--            <a class="btn btn-light btn-block bg-white" href="/oauth2/authorization/github-idp" role="link"-->
-<!--               style="text-transform: none;">-->
-<!--                <img width="24" style="margin-right: 5px;" alt="Sign in with GitHub"-->
-<!--                     src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" />-->
-<!--                Github-->
-<!--            </a>-->
-<!--        </div>-->
+Sign in with Gitee
+</a>-->
+        <!--        <div class="text-placeholder">-->
+        <!--            第三方登录-->
+        <!--        </div>-->
+        <!--        <div>-->
+        <!--            <a class="btn btn-light btn-block bg-white" href="/oauth2/authorization/github-idp" role="link"-->
+        <!--               style="text-transform: none;">-->
+        <!--                <img width="24" style="margin-right: 5px;" alt="Sign in with GitHub"-->
+        <!--                     src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" />-->
+        <!--                Github-->
+        <!--            </a>-->
+        <!--        </div>-->
     </form>
 </div>
 </body>
 
 </html>
 <script>
+    function showSmsCaptchaPage() {
+        // 隐藏密码框
+        let passContainer = document.getElementById('passContainer');
+        passContainer.style.display = 'none';
+        // 设置password输入框的name为空
+        passContainer.children[0].setAttribute('name', '')
+        // 隐藏验证码框
+        let codeContainer = document.getElementById('codeContainer');
+        codeContainer.style.display = 'none';
+        // 设置登录类型为短信验证码
+        let loginType = document.getElementById('loginType');
+        loginType.value = 'smsCaptcha';
+        // 显示获取短信验证码按钮与输入框
+        let smsContainer = document.getElementById('smsContainer');
+        smsContainer.style.display = '';
+        smsContainer.children[0].setAttribute('name', 'password')
+        // 设置切换按钮文字与点击效果
+        let changeLoginType = document.getElementById('changeLoginType');
+        changeLoginType.innerText = '账号密码登录';
+        changeLoginType.setAttribute('href', 'javascript:showPasswordPage()')
+        changeLoginType.style.paddingTop = '25px';
+        changeLoginType.style.paddingBottom = '5px';
+    }
+
+    function showPasswordPage() {
+        // 显示密码框
+        let passContainer = document.getElementById('passContainer');
+        passContainer.style.display = '';
+        // 设置password输入框
+        passContainer.children[0].setAttribute('name', 'password')
+        // 显示验证码框
+        let codeContainer = document.getElementById('codeContainer');
+        codeContainer.style.display = '';
+        // 设置登录类型为账号密码
+        let loginType = document.getElementById('loginType');
+        loginType.value = 'passwordLogin';
+        // 隐藏获取短信验证码按钮与输入框
+        let smsContainer = document.getElementById('smsContainer');
+        smsContainer.style.display = 'none';
+        smsContainer.children[0].setAttribute('name', '')
+        // 设置切换按钮文字与点击效果
+        let changeLoginType = document.getElementById('changeLoginType');
+        changeLoginType.innerText = '短信验证登录'
+        changeLoginType.setAttribute('href', 'javascript:showSmsCaptchaPage()')
+        changeLoginType.style.paddingTop = '0';
+    }
+
     function leave() {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
     }
@@ -97,6 +154,56 @@
             .catch(error => console.log('error', error));
     }
 
+    function getSmsCaptcha() {
+
+        let phone = document.getElementById('username').value;
+        if (phone === null || phone === '' || typeof phone === 'undefined') {
+            showError('手机号码不能为空.')
+            return;
+        }
+
+        // 禁用按钮
+        let getSmsCaptchaBtn = document.getElementById('getSmsCaptchaBtn');
+        getSmsCaptchaBtn.style.pointerEvents = 'none';
+        // 开始1分钟倒计时
+        resetBtn(getSmsCaptchaBtn);
+
+        let requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch(`${window.location.origin}/getSmsCaptcha?phone=${phone}`, requestOptions)
+            .then(response => response.text())
+            .then(r => {
+                if (r) {
+                    let result = JSON.parse(r);
+                    if (result.success) {
+                        showError('获取验证码成功.固定为：' + result.data)
+                    }
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
+
+    /**
+     * 1分钟倒计时
+     */
+    function resetBtn(getSmsCaptchaBtn) {
+        let s = 60;
+        getSmsCaptchaBtn.innerText = `重新获取(${--s})`
+        // 定时器 每隔一秒变化一次（1000ms = 1s）
+        let t = setInterval(() => {
+            getSmsCaptchaBtn.innerText = `重新获取(${--s})`
+            if (s === 0) {
+                clearInterval(t)
+                getSmsCaptchaBtn.innerText = '获取验证码'
+                getSmsCaptchaBtn.style.pointerEvents = '';
+            }
+        }, 1000);
+
+    }
+
     getVerifyCode();
 </script>
 <script th:inline="javascript">
@@ -105,7 +212,11 @@
         let errorBox = document.getElementById("error_box");
         errorBox.innerHTML = message;
         errorBox.style.display = "block";
+        setTimeout(() => {
+            closeError();
+        }, 3000)
     }
+
     function closeError() {
         let errorBox = document.getElementById("error_box");
         errorBox.style.display = "none";
@@ -127,9 +238,6 @@
                     }, 3000)
                 } else {
                     showError(error);
-                    setTimeout(() => {
-                        closeError();
-                    }, 3000)
                 }
             })
         }

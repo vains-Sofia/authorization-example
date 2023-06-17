@@ -1,7 +1,8 @@
 package com.example.config;
 
-import com.example.authorization.DeviceClientAuthenticationConverter;
-import com.example.authorization.DeviceClientAuthenticationProvider;
+import com.example.authorization.device.DeviceClientAuthenticationConverter;
+import com.example.authorization.device.DeviceClientAuthenticationProvider;
+import com.example.constant.SecurityConstants;
 import com.example.util.SecurityUtils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -144,7 +145,7 @@ public class AuthorizationConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源
-                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha").permitAll()
+                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 指定登录页面
@@ -187,7 +188,7 @@ public class AuthorizationConfig {
 
                 JwtClaimsSet.Builder claims = context.getClaims();
                 // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
-                claims.claim("authorities", authoritySet);
+                claims.claim(SecurityConstants.AUTHORITIES_KEY, authoritySet);
                 // 放入其它自定内容
                 // 角色、头像...
             }
@@ -205,7 +206,7 @@ public class AuthorizationConfig {
         // 设置解析权限信息的前缀，设置为空是去掉前缀
         grantedAuthoritiesConverter.setAuthorityPrefix("");
         // 设置权限信息在jwt claims中的key
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(SecurityConstants.AUTHORITIES_KEY);
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);

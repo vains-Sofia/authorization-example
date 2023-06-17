@@ -43,6 +43,21 @@ public class AuthorizationController {
     private final OAuth2AuthorizationConsentService authorizationConsentService;
 
     @ResponseBody
+    @GetMapping("/getSmsCaptcha")
+    public Map<String,Object> getSmsCaptcha(String phone, HttpSession session) {
+        // 这里应该返回一个统一响应类，暂时使用map代替
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", HttpStatus.OK.value());
+        result.put("success", true);
+        result.put("message", "获取短信验证码成功.");
+        // 固定1234
+        result.put("data", "1234");
+        // 存入session中
+        session.setAttribute(phone, "1234");
+        return result;
+    }
+
+    @ResponseBody
     @GetMapping("/getCaptcha")
     public Map<String,Object> getCaptcha(HttpSession session) {
         // 使用hutool-captcha生成图形验证码
