@@ -39,30 +39,6 @@ public class SmsCaptchaLoginAuthenticationProvider extends CaptchaAuthentication
         super(userDetailsService, passwordEncoder);
     }
 
-    /*@Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        // 获取当前request
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes == null) {
-            throw new InvalidCaptchaException("Failed to get the current request.");
-        }
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-
-        // 获取手机号与验证码
-        String phone = request.getParameter("phone");
-        String smsCaptcha = request.getParameter("smsCaptcha");
-        // 非空校验
-        if (ObjectUtils.isEmpty(phone) || ObjectUtils.isEmpty(smsCaptcha)) {
-            throw new BadCredentialsException("账号密码不能为空.");
-        }
-
-        // 构建UsernamePasswordAuthenticationToken
-        UsernamePasswordAuthenticationToken unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(phone, smsCaptcha);
-        unauthenticated.setDetails(new WebAuthenticationDetails(request));
-
-        return super.authenticate(unauthenticated);
-    }*/
-
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         log.info("Authenticate sms captcha...");
@@ -81,7 +57,13 @@ public class SmsCaptchaLoginAuthenticationProvider extends CaptchaAuthentication
 
         // 获取当前登录方式
         String loginType = request.getParameter("loginType");
-        if (Objects.equals(loginType, SecurityConstants.SMS_LOGIN_TYPE)) {
+        // 获取grant_type
+        String grantType = request.getParameter("grant_type");
+        // 短信登录和自定义短信认证grant type会走下方认证
+        // 如果是自定义密码模式则下方的认证判断只要判断下loginType即可
+        // if (Objects.equals(loginType, SecurityConstants.SMS_LOGIN_TYPE)) {}
+        if (Objects.equals(loginType, SecurityConstants.SMS_LOGIN_TYPE)
+            || Objects.equals(grantType, SecurityConstants.GRANT_TYPE_SMS_CODE)) {
             // 获取存入session的验证码(UsernamePasswordAuthenticationToken的principal中现在存入的是手机号)
             String smsCaptcha = (String) request.getSession(Boolean.FALSE).getAttribute((String) authentication.getPrincipal());
             // 校验输入的验证码是否正确(UsernamePasswordAuthenticationToken的credentials中现在存入的是输入的验证码)
