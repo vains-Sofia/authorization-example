@@ -48,6 +48,8 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (七) 登录添加图形验证码](https://juejin.cn/post/7242476048005709879)**<br>
 **[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://juejin.cn/spost/7243725197911834683)**<br>
 **[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://juejin.cn/spost/7244043482772029498)**<br>
+**[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://juejin.cn/post/7245538214114492474)**<br>
+**[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://juejin.cn/post/7246409673565372475)**<br>
 
 ### CSDN
 
@@ -60,3 +62,5 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (七) 登录添加图形验证码](https://blog.csdn.net/weixin_43356507/article/details/131109818)**<br>
 **[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131173945)**<br>
 **[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131190785)**<br>
+**[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://blog.csdn.net/weixin_43356507/article/details/131262461)**<br>
+**[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://blog.csdn.net/weixin_43356507/article/details/131297456)**<br>
