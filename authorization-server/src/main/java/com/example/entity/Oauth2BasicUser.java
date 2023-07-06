@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +23,9 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Getter
 @Setter
+@JsonSerialize
 @TableName("oauth2_basic_user")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Oauth2BasicUser implements UserDetails, Serializable {
 
     @Serial
