@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -28,7 +30,10 @@ public class JsonUtils {
         throw new UnsupportedOperationException("Utility classes cannot be instantiated.");
     }
 
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    /**
+     * 设置为public是为了提供给redis的序列化器
+     */
+    public final static ObjectMapper MAPPER = new ObjectMapper();
 
     static {
         // 对象的所有字段全部列入，还是其他的选项，可以忽略null等
@@ -41,6 +46,9 @@ public class JsonUtils {
         MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         // 忽略未知属性，防止json字符串中存在，java对象中不存在对应属性的情况出现错误
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 添加java8序列化支持和新版时间对象序列化支持
+        MAPPER.registerModule(new Jdk8Module());
+        MAPPER.registerModule(new JavaTimeModule());
     }
 
     /**

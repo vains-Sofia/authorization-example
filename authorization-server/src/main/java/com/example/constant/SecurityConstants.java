@@ -8,6 +8,21 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
+     * 登录方式入参名
+     */
+    public static final String LOGIN_TYPE_NAME = "loginType";
+
+    /**
+     * 验证码id入参名
+     */
+    public static final String CAPTCHA_ID_NAME = "captchaId";
+
+    /**
+     * 验证码值入参名
+     */
+    public static final String CAPTCHA_CODE_NAME = "code";
+
+    /**
      * 登录方式——短信验证码
      */
     public static final String SMS_LOGIN_TYPE = "smsCaptcha";

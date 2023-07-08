@@ -26,6 +26,7 @@
 <div class="form-container">
 
     <form class="form-signin" method="post" th:action="@{/login}">
+        <input type="hidden" id="captchaId" name="captchaId" value=""/>
         <input type="hidden" id="loginType" name="loginType" value="passwordLogin"/>
         <!-- <div th:if="${param.error}" class="alert alert-danger" role="alert" th:text="${param}">
 Invalid username or password.
@@ -148,7 +149,8 @@ Sign in with Gitee
             .then(r => {
                 if (r) {
                     let result = JSON.parse(r);
-                    document.getElementById('code-image').src = result.data
+                    document.getElementById('captchaId').value = result.data.captchaId
+                    document.getElementById('code-image').src = result.data.imageData
                 }
             })
             .catch(error => console.log('error', error));

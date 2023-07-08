@@ -12,9 +12,9 @@ import com.example.mapper.Oauth2BasicUserMapper;
 import com.example.mapper.SysAuthorityMapper;
 import com.example.mapper.SysRoleAuthorityMapper;
 import com.example.mapper.SysUserRoleMapper;
+import com.example.model.security.CustomGrantedAuthority;
 import com.example.service.IOauth2BasicUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -72,7 +72,7 @@ public class Oauth2BasicUserServiceImpl extends ServiceImpl<Oauth2BasicUserMappe
 
         // 根据菜单ID查出菜单
         List<SysAuthority> menus = sysAuthorityMapper.selectBatchIds(menusId);
-        Set<SimpleGrantedAuthority> authorities = Optional.ofNullable(menus).orElse(Collections.emptyList()).stream().map(SysAuthority::getUrl).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        Set<CustomGrantedAuthority> authorities = Optional.ofNullable(menus).orElse(Collections.emptyList()).stream().map(SysAuthority::getUrl).map(CustomGrantedAuthority::new).collect(Collectors.toSet());
         basicUser.setAuthorities(authorities);
         return basicUser;
     }
