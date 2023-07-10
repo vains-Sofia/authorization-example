@@ -28,7 +28,7 @@ public class LoginController {
         // 示例项目，固定1234
         String smsCaptcha = "1234";
         // 存入缓存中，5分钟后过期
-        redisOperator.set((SMS_CAPTCHA_PREFIX_KEY + phone), smsCaptcha, CAPTCHA_TIMEOUT_SECONDS);
+        redisOperator.set((SMS_CAPTCHA_PREFIX_KEY + phone), smsCaptcha, DEFAULT_TIMEOUT_SECONDS);
         return Result.success("获取短信验证码成功.", smsCaptcha);
     }
 
@@ -36,11 +36,11 @@ public class LoginController {
     public Result<CaptchaResult> getCaptcha() {
         // 使用huTool-captcha生成图形验证码
         // 定义图形验证码的长、宽、验证码字符数、干扰线宽度
-        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(150, 40, 4, 2);
+        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(130, 34, 4, 2);
         // 生成一个唯一id
         long id = IdWorker.getId();
         // 存入缓存中，5分钟后过期
-        redisOperator.set((IMAGE_CAPTCHA_PREFIX_KEY + id), captcha.getCode(), CAPTCHA_TIMEOUT_SECONDS);
+        redisOperator.set((IMAGE_CAPTCHA_PREFIX_KEY + id), captcha.getCode(), DEFAULT_TIMEOUT_SECONDS);
         return Result.success("获取验证码成功.", new CaptchaResult(String.valueOf(id), captcha.getCode(), captcha.getImageBase64Data()));
     }
 

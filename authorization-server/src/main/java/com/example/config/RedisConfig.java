@@ -32,8 +32,6 @@ public class RedisConfig {
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
 
-        // 设置值序列化器
-        redisTemplate.setValueSerializer(valueSerializer);
         // 设置hash格式数据值的序列化器
         redisTemplate.setHashValueSerializer(valueSerializer);
         // 默认的Key序列化器为：JdkSerializationRedisSerializer
