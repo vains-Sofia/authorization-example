@@ -24,7 +24,7 @@ const loginModel = ref({
   password: '',
   loginType: '',
   captchaId: '',
-  nonce: uuid()
+  nonce: getQueryString('nonce')
 })
 
 // 图形验证码的base64数据
@@ -72,13 +72,7 @@ const submitLogin = () => {
       // message.info(`登录成功`)
       let target = getQueryString('target')
       if (target) {
-        let concatStr = ''
-        if (hasParam(target)) {
-          concatStr = '&'
-        } else {
-          concatStr = '?'
-        }
-        window.location.href = `${target}${concatStr}nonce=${loginModel.value.nonce}`
+        window.location.href = target
       }
     } else {
       message.warning(result.message)
@@ -105,13 +99,7 @@ const submitSmsLogin = () => {
       message.info(`登录成功`)
       let target = getQueryString('target')
       if (target) {
-        let concatStr = ''
-        if (hasParam(target)) {
-          concatStr = '&'
-        } else {
-          concatStr = '?'
-        }
-        window.location.href = `${target}${concatStr}nonce=${loginModel.value.nonce}`
+        window.location.href = target
       }
     } else {
       message.warning(result.message)
@@ -184,12 +172,6 @@ function getQueryString(name: string) {
   }
 
   return null
-}
-
-const hasParam = (url: string) => {
-  url = decodeURIComponent(url)
-  let arr = url.split('?')
-  return arr.length > 1 && arr[1] !== ''
 }
 
 getCaptcha()
