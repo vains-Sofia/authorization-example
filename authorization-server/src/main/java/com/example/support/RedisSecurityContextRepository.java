@@ -98,9 +98,10 @@ public class RedisSecurityContextRepository implements SecurityContextRepository
 
     /**
      * 先从请求头中找，找不到去请求参数中找，找不到获取当前session的id
+     *  2023-07-11新增逻辑：获取当前session的sessionId
      *
      * @param request 当前请求
-     * @return 随机字符串(sessionId)
+     * @return 随机字符串(sessionId)，这个字符串本来是前端生成，现在改为后端获取的sessionId
      */
     private String getNonce(HttpServletRequest request) {
         String nonce = request.getHeader(NONCE_HEADER_NAME);

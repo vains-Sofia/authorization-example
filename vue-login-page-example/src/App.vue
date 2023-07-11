@@ -6,17 +6,6 @@ import { type CountdownProps, createDiscreteApi } from 'naive-ui'
 
 const { message } = createDiscreteApi(['message'])
 
-/**
- * 获取uuid
- */
-const uuid = () => {
-  const temp_url = URL.createObjectURL(new Blob())
-  const uuid = temp_url.toString()
-  //释放这个url
-  URL.revokeObjectURL(temp_url)
-  return uuid.substring(uuid.lastIndexOf('/') + 1)
-}
-
 // 定义登录提交的对象
 const loginModel = ref({
   code: '',

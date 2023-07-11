@@ -51,6 +51,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
             requestUrl.append("?").append(request.getQueryString());
         }
 
+        // 2023-07-11添加逻辑：重定向地址添加nonce参数，该参数的值为sessionId
         // 绝对路径在重定向前添加target参数
         String targetParameter = URLEncoder.encode(requestUrl.toString(), StandardCharsets.UTF_8);
         String targetUrl = loginForm + "?target=" + targetParameter + "&" + SecurityConstants.NONCE_HEADER_NAME + "=" + request.getSession(Boolean.FALSE).getId();
