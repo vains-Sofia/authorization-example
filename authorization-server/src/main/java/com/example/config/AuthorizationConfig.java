@@ -56,6 +56,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -84,6 +85,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class AuthorizationConfig {
+
+    /**
+     * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
+     */
+    private final String LOGIN_URL = "http://127.0.0.1:5173";
 
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
 
@@ -136,7 +142,7 @@ public class AuthorizationConfig {
                 // 当未登录时访问认证端点时重定向至login页面
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginTargetAuthenticationEntryPoint("http://127.0.0.1:5173"),
+                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
@@ -193,11 +199,14 @@ public class AuthorizationConfig {
                         .anyRequest().authenticated()
                 )
                 // 指定登录页面
-                .formLogin(formLogin ->
-                        formLogin.loginPage("/login")
-                                // 登录成功和失败改为写回json，不重定向了
-                                .successHandler(new LoginSuccessHandler())
-                                .failureHandler(new LoginFailureHandler())
+                .formLogin(formLogin -> {
+                            formLogin.loginPage("/login");
+                            if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
+                                // 绝对路径代表是前后端分离，登录成功和失败改为写回json，不重定向了
+                                formLogin.successHandler(new LoginSuccessHandler());
+                                formLogin.failureHandler(new LoginFailureHandler());
+                            }
+                        }
                 );
         // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
         http.oauth2ResourceServer((resourceServer) -> resourceServer
@@ -209,7 +218,7 @@ public class AuthorizationConfig {
                 // 当未登录时访问认证端点时重定向至login页面
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginTargetAuthenticationEntryPoint("http://127.0.0.1:5173"),
+                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 );
