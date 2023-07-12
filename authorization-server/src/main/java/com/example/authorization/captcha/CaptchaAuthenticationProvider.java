@@ -74,7 +74,7 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
 
         String captchaId = request.getParameter(SecurityConstants.CAPTCHA_ID_NAME);
         // 获取缓存中存储的验证码
-        String captchaCode = redisOperator.getAndDelete((IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
+        String captchaCode = redisOperator.get((IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
         if (!ObjectUtils.isEmpty(captchaCode)) {
             if (!captchaCode.equalsIgnoreCase(code)) {
                 throw new InvalidCaptchaException("The captcha is incorrect.");
@@ -83,6 +83,8 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
             throw new InvalidCaptchaException("The captcha is abnormal. Obtain it again.");
         }
 
+        // 删除缓存
+        redisOperator.delete((IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
         log.info("Captcha authenticated.");
         return super.authenticate(authentication);
     }

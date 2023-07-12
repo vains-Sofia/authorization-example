@@ -18,6 +18,8 @@
 
 自定义grant_type
 
+授权码模式使用前后端分离的登录页面
+
 ## 项目环境要求
 
 **Java版本大于等于17**
@@ -36,7 +38,9 @@ authorization-example # 最外层目录
  │  
  ├─authorization-client-example # 客户端集成示例
  │  
- └─resource-server-example # Resource Server集成示例
+ ├─resource-server-example # Resource Server集成示例
+ │  
+ └─vue-login-page-example # 前后端登录中的前端模块
 ```
 
 ## 文章地址
@@ -54,6 +58,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://juejin.cn/spost/7244043482772029498)**<br>
 **[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://juejin.cn/post/7245538214114492474)**<br>
 **[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://juejin.cn/post/7246409673565372475)**<br>
+**[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://juejin.cn/post/7254096495184134181)**<br>
 
 ### CSDN
 
@@ -68,3 +73,4 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131190785)**<br>
 **[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://blog.csdn.net/weixin_43356507/article/details/131262461)**<br>
 **[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://blog.csdn.net/weixin_43356507/article/details/131297456)**<br>
+**[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://blog.csdn.net/weixin_43356507/article/details/131650660)**<br>
