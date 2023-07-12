@@ -457,8 +457,8 @@ public class AuthorizationConfig {
     @SneakyThrows
     public JWKSource<SecurityContext> jwkSource() {
         // 先从redis获取
-        String jws = redisOperator.get(RedisConstants.AUTHORIZATION_JWS_PREFIX_KEY);
-        if (ObjectUtils.isEmpty(jws)) {
+        String jwkSetCache = redisOperator.get(RedisConstants.AUTHORIZATION_JWS_PREFIX_KEY);
+        if (ObjectUtils.isEmpty(jwkSetCache)) {
             KeyPair keyPair = generateRsaKey();
             RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
             RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
@@ -475,7 +475,7 @@ public class AuthorizationConfig {
             return new ImmutableJWKSet<>(jwkSet);
         }
         // 解析存储的jws
-        JWKSet jwkSet = JWKSet.parse(jws);
+        JWKSet jwkSet = JWKSet.parse(jwkSetCache);
         return new ImmutableJWKSet<>(jwkSet);
     }
 
