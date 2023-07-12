@@ -8,6 +8,11 @@ package com.example.constant;
 public class RedisConstants {
 
     /**
+     * jwk set缓存前缀
+     */
+    public static final String AUTHORIZATION_JWS_PREFIX_KEY = "authorization_jws";
+
+    /**
      * 认证信息存储前缀
      */
     public static final String SECURITY_CONTEXT_PREFIX_KEY = "security_context:";
