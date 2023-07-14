@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,12 @@ public class SmsCaptchaGrantAuthenticationProvider implements AuthenticationProv
 
         // Initialize the OAuth2Authorization
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
-                .principalName(clientPrincipal.getName())
+                // 存入授权scope
+                .authorizedScopes(authorizedScopes)
+                // 当前授权用户名称
+                .principalName(authenticate.getName())
+                // 设置当前用户认证信息
+                .attribute(Principal.class.getName(), authenticate)
                 .authorizationGrantType(authenticationToken.getAuthorizationGrantType());
 
         // ----- Access token -----
