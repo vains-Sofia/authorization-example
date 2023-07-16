@@ -2,6 +2,7 @@ package com.example.config;
 
 import com.example.authorization.device.DeviceClientAuthenticationConverter;
 import com.example.authorization.device.DeviceClientAuthenticationProvider;
+import com.example.authorization.federation.FederatedIdentityIdTokenCustomizer;
 import com.example.authorization.handler.LoginFailureHandler;
 import com.example.authorization.handler.LoginSuccessHandler;
 import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
@@ -31,14 +32,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
@@ -69,8 +67,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * 认证配置
@@ -94,7 +91,7 @@ public class AuthorizationConfig {
     /**
      * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
      */
-    private final String LOGIN_URL = "http://127.0.0.1:5173";
+    private final String LOGIN_URL = "/login";
 
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
 
@@ -200,7 +197,7 @@ public class AuthorizationConfig {
         http.cors(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源
-                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha").permitAll()
+                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 指定登录页面
@@ -219,14 +216,21 @@ public class AuthorizationConfig {
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
         );
-        http
-                // 当未登录时访问认证端点时重定向至login页面
-                .exceptionHandling((exceptions) -> exceptions
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                        )
-                );
+        if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
+            http
+                    // 当未登录时访问认证端点时重定向至login页面
+                    .exceptionHandling((exceptions) -> exceptions
+                            .defaultAuthenticationEntryPointFor(
+                                    new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
+                                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                            )
+                    );
+        }
+        // 联合登录配置
+        http.oauth2Login(oauth2Login ->
+                oauth2Login
+                        .loginPage("/login")
+        );
 
         // 使用redis存储、读取登录的认证信息
         http.securityContext(context -> context.securityContextRepository(redisSecurityContextRepository));
@@ -273,30 +277,7 @@ public class AuthorizationConfig {
      */
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> oAuth2TokenCustomizer() {
-        return context -> {
-            // 检查登录用户信息是不是UserDetails，排除掉没有用户参与的流程
-            if (context.getPrincipal().getPrincipal() instanceof UserDetails user) {
-                // 获取申请的scopes
-                Set<String> scopes = context.getAuthorizedScopes();
-                // 获取用户的权限
-                Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-                // 提取权限并转为字符串
-                Set<String> authoritySet = Optional.ofNullable(authorities).orElse(Collections.emptyList()).stream()
-                        // 获取权限字符串
-                        .map(GrantedAuthority::getAuthority)
-                        // 去重
-                        .collect(Collectors.toSet());
-
-                // 合并scope与用户信息
-                authoritySet.addAll(scopes);
-
-                JwtClaimsSet.Builder claims = context.getClaims();
-                // 将权限信息放入jwt的claims中（也可以生成一个以指定字符分割的字符串放入）
-                claims.claim(SecurityConstants.AUTHORITIES_KEY, authoritySet);
-                // 放入其它自定内容
-                // 角色、头像...
-            }
-        };
+        return new FederatedIdentityIdTokenCustomizer();
     }
 
     /**
@@ -519,7 +500,7 @@ public class AuthorizationConfig {
                     设置token签发地址(http(s)://{ip}:{port}/context-path, http(s)://domain.com/context-path)
                     如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
                  */
-                .issuer("http://192.168.120.33:8080")
+                .issuer("http://192.168.1.102:8080")
                 .build();
     }
 

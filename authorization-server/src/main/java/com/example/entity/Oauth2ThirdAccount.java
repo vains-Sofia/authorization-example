@@ -1,12 +1,12 @@
 package com.example.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -41,6 +41,21 @@ public class Oauth2ThirdAccount implements Serializable {
     private String uniqueId;
 
     /**
+     * 三方登录用户名
+     */
+    private String thirdUsername;
+
+    /**
+     * 三方登录获取的认证信息
+     */
+    private String credentials;
+
+    /**
+     * 三方登录获取的认证信息的过期时间
+     */
+    private LocalDateTime credentialsExpiresAt;
+
+    /**
      * 三方登录类型
      */
     private String type;
@@ -66,4 +81,16 @@ public class Oauth2ThirdAccount implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+    /**
+     * 用户名、昵称
+     */
+    @TableField(exist = false)
+    private String name;
+
+    /**
+     * 头像地址
+     */
+    @TableField(exist = false)
+    private String avatarUrl;
 }

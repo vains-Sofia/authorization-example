@@ -1,7 +1,9 @@
 package com.example.service;
 
-import com.example.entity.SysAuthority;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.entity.SysAuthority;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +14,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-07-04
  */
 public interface ISysAuthorityService extends IService<SysAuthority> {
+
+    /**
+     * 根据用户id获取权限列表
+     *
+     * @param userId 用户id
+     * @return 权限列表
+     */
+    List<SysAuthority> getByUserId(Integer userId);
 
 }
