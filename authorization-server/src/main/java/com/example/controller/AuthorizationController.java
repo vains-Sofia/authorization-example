@@ -96,7 +96,7 @@ public class AuthorizationController {
         }
         // 根据当前sub去三方登录表去查
         LambdaQueryWrapper<Oauth2ThirdAccount> wrapper = Wrappers.lambdaQuery(Oauth2ThirdAccount.class)
-                .eq(Oauth2ThirdAccount::getThirdUsername, account)
+                .eq(Oauth2ThirdAccount::getUniqueId, account)
                 .eq(Oauth2ThirdAccount::getType, token.getClaim("loginType"));
         Oauth2ThirdAccount oauth2ThirdAccount = thirdAccountService.getOne(wrapper);
         if (oauth2ThirdAccount == null) {

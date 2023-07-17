@@ -25,12 +25,17 @@ spring:
             scope:
               - emails
               - projects
+          github:
+            # security client默认实现了GitHub提供的oauth2登录
+            provider: github
+            client-id:
+            client-secret:
         # oauth登录提供商
         provider:
           # gitee配置
           gitee:
             # 设置用户信息响应体中账号的字段
-            user-name-attribute: login
+            user-name-attribute: id
             # 获取token的地址
             token-uri: https://gitee.com/oauth/token
             # 获取用户信息的地址
