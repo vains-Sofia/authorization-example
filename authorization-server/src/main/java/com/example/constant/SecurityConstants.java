@@ -8,12 +8,12 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
-     * 随机字符串请求头名字
+     * 三方登录类型——Gitee
      */
     public static final String THIRD_LOGIN_GITEE = "gitee";
 
     /**
-     * 随机字符串请求头名字
+     * 三方登录类型——Github
      */
     public static final String THIRD_LOGIN_GITHUB = "github";
 
