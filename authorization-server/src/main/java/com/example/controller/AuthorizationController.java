@@ -110,6 +110,7 @@ public class AuthorizationController {
         // 复制基础用户信息
         BeanUtils.copyProperties(oauth2BasicUser, result);
         // 设置三方用户信息
+        result.setLocation(oauth2ThirdAccount.getLocation());
         result.setCredentials(oauth2ThirdAccount.getCredentials());
         result.setThirdUsername(oauth2ThirdAccount.getThirdUsername());
         result.setCredentialsExpiresAt(oauth2ThirdAccount.getCredentialsExpiresAt());

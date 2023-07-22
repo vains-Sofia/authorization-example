@@ -8,6 +8,7 @@ spring:
     oauth2:
       client:
         registration:
+          # 这个'gitee'就是registrationId
           gitee:
             # 指定oauth登录提供者，该oauth登录由provider中的gitee来处理
             provider: gitee
@@ -17,7 +18,7 @@ spring:
             authorization-grant-type: authorization_code
             # 客户端id，使用自己的gitee的客户端id
             client-id:
-            # 客户端秘钥，使用自己的gitee的客户端id
+            # 客户端秘钥，使用自己的gitee的客户端秘钥
             client-secret:
             # 回调地址
             redirect-uri: http://192.168.1.102:8080/login/oauth2/code/gitee
@@ -32,7 +33,7 @@ spring:
             client-secret:
         # oauth登录提供商
         provider:
-          # gitee配置
+          # gitee的OAuth2端点配置
           gitee:
             # 设置用户信息响应体中账号的字段
             user-name-attribute: id

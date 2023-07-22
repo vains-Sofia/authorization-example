@@ -8,17 +8,15 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 import static com.example.constant.SecurityConstants.THIRD_LOGIN_GITEE;
-import static com.example.strategy.impl.GiteeUserConverter.LOGIN_TYPE;
 
 /**
  * 转换通过码云登录的用户信息
  *
  * @author vains
  */
-@Component(LOGIN_TYPE)
+@Component(THIRD_LOGIN_GITEE)
 public class GiteeUserConverter implements Oauth2UserConverterStrategy {
 
-    protected static final String LOGIN_TYPE = THIRD_LOGIN_GITEE;
 
     @Override
     public Oauth2ThirdAccount convert(OAuth2User oAuth2User) {
@@ -28,7 +26,7 @@ public class GiteeUserConverter implements Oauth2UserConverterStrategy {
         Oauth2ThirdAccount thirdAccount = new Oauth2ThirdAccount();
         thirdAccount.setUniqueId(oAuth2User.getName());
         thirdAccount.setThirdUsername(String.valueOf(attributes.get("login")));
-        thirdAccount.setType(LOGIN_TYPE);
+        thirdAccount.setType(THIRD_LOGIN_GITEE);
         thirdAccount.setBlog(String.valueOf(attributes.get("blog")));
         // 设置基础用户信息
         thirdAccount.setName(String.valueOf(attributes.get("name")));

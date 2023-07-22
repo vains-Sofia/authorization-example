@@ -7,15 +7,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import static com.example.constant.SecurityConstants.THIRD_LOGIN_GITHUB;
-import static com.example.strategy.impl.GithubUserConverter.LOGIN_TYPE;
 
 /**
  * 转换通过Github登录的用户信息
  *
  * @author vains
  */
-@Component(LOGIN_TYPE)
 @RequiredArgsConstructor
+@Component(THIRD_LOGIN_GITHUB)
 public class GithubUserConverter implements Oauth2UserConverterStrategy {
 
     private final GiteeUserConverter userConverter;
@@ -26,6 +25,10 @@ public class GithubUserConverter implements Oauth2UserConverterStrategy {
     public Oauth2ThirdAccount convert(OAuth2User oAuth2User) {
         // github与gitee目前所取字段一致，直接调用gitee的解析
         Oauth2ThirdAccount thirdAccount = userConverter.convert(oAuth2User);
+        // 提取location
+        Object location = oAuth2User.getAttributes().get("location");
+        thirdAccount.setLocation(String.valueOf(location));
+        // 设置登录类型
         thirdAccount.setType(LOGIN_TYPE);
         return thirdAccount;
     }

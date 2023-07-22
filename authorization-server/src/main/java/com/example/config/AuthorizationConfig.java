@@ -216,6 +216,7 @@ public class AuthorizationConfig {
                 .accessDeniedHandler(SecurityUtils::exceptionHandler)
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
         );
+        // 兼容前后端分离与不分离配置
         if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
             http
                     // 当未登录时访问认证端点时重定向至login页面
@@ -229,7 +230,7 @@ public class AuthorizationConfig {
         // 联合登录配置
         http.oauth2Login(oauth2Login ->
                 oauth2Login
-                        .loginPage("/login")
+                        .loginPage(LOGIN_URL)
         );
 
         // 使用redis存储、读取登录的认证信息

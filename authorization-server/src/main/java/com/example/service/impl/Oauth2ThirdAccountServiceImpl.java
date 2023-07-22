@@ -41,7 +41,7 @@ public class Oauth2ThirdAccountServiceImpl extends ServiceImpl<Oauth2ThirdAccoun
                 Integer userId = basicUserService.saveByThirdAccount(thirdAccount);
                 oauth2ThirdAccount.setUserId(userId);
             }
-            // 存在更新用户信息
+            // 存在更新用户的认证信息
             oauth2ThirdAccount.setCredentials(thirdAccount.getCredentials());
             oauth2ThirdAccount.setCredentialsExpiresAt(thirdAccount.getCredentialsExpiresAt());
             // 设置空， 让MybatisPlus自动填充

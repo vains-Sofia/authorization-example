@@ -25,6 +25,8 @@ public class Oauth2UserConverterContext {
 
     /**
      * 注入所有实例，map的key是实例在ioc中的名字
+     *  这里通过构造器注入所有Oauth2UserConverterStrategy的实例，实例名之前在编写时已经通过
+     *  {@link Component }注解指定过bean的名字，可以根据给定bean名称从map中获取对应的实例(如果存在)
      */
     private final Map<String, Oauth2UserConverterStrategy> userConverterStrategyMap;
 

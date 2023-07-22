@@ -35,6 +35,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         thirdAccountService.checkAndSaveUser(oauth2ThirdAccount);
         // 将loginType设置至attributes中
         LinkedHashMap<String, Object> attributes = new LinkedHashMap<>(oAuth2User.getAttributes());
+        // 将RegistrationId当做登录类型
         attributes.put("loginType", userRequest.getClientRegistration().getRegistrationId());
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
                 .getUserNameAttributeName();

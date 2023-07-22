@@ -39,6 +39,7 @@ public class CustomOidcUserService extends OidcUserService {
         OidcIdToken oidcIdToken = oidcUser.getIdToken();
         // 将loginType设置至attributes中
         LinkedHashMap<String, Object> attributes = new LinkedHashMap<>(oidcIdToken.getClaims());
+        // 将RegistrationId当做登录类型
         attributes.put("loginType", userRequest.getClientRegistration().getRegistrationId());
         // 重新生成一个idToken
         OidcIdToken idToken = new OidcIdToken(oidcIdToken.getTokenValue(), oidcIdToken.getIssuedAt(), oidcIdToken.getExpiresAt(), attributes);
