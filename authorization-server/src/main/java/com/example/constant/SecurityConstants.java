@@ -8,9 +8,19 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
+     * 三方登录类型——Gitee
+     */
+    public static final String THIRD_LOGIN_GITEE = "gitee";
+
+    /**
+     * 三方登录类型——Github
+     */
+    public static final String THIRD_LOGIN_GITHUB = "github";
+
+    /**
      * 随机字符串请求头名字
      */
-    public static final String NONCE_HEADER_NAME = "nonce";
+    public static final String NONCE_HEADER_NAME = "nonceId";
 
     /**
      * 登录方式入参名

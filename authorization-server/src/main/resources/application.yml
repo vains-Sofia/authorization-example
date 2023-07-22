@@ -4,6 +4,45 @@ spring:
     url: jdbc:mysql://localhost:3306/authorization-example?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
     username: root
     password: root
+  security:
+    oauth2:
+      client:
+        registration:
+          # 这个'gitee'就是registrationId
+          gitee:
+            # 指定oauth登录提供者，该oauth登录由provider中的gitee来处理
+            provider: gitee
+            # 客户端名字
+            client-name: Sign in with Gitee
+            # 认证方式
+            authorization-grant-type: authorization_code
+            # 客户端id，使用自己的gitee的客户端id
+            client-id:
+            # 客户端秘钥，使用自己的gitee的客户端秘钥
+            client-secret:
+            # 回调地址
+            redirect-uri: http://192.168.1.102:8080/login/oauth2/code/gitee
+            # 申请scope列表
+            scope:
+              - emails
+              - projects
+          github:
+            # security client默认实现了GitHub提供的oauth2登录
+            provider: github
+            client-id:
+            client-secret:
+        # oauth登录提供商
+        provider:
+          # gitee的OAuth2端点配置
+          gitee:
+            # 设置用户信息响应体中账号的字段
+            user-name-attribute: id
+            # 获取token的地址
+            token-uri: https://gitee.com/oauth/token
+            # 获取用户信息的地址
+            user-info-uri: https://gitee.com/api/v5/user
+            # 发起授权申请的地址
+            authorization-uri: https://gitee.com/oauth/authorize
 
 # Mybatis-Plus 配置
 mybatis-plus:

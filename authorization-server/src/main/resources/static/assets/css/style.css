@@ -189,6 +189,16 @@ body {
     padding-left: 10px;
 }
 
+/* 三方登录图标 */
+.third-box {
+    text-align: center;
+    margin-bottom: 0 !important;
+}
+.third-box img {
+    position: relative;
+    top: 3px;
+}
+
 @keyframes shake {
     0% {
         transform: translate(-50%, -50%);

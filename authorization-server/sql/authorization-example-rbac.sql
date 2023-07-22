@@ -48,23 +48,6 @@ VALUES (1, '云逸', 'admin', '$2a$10$K7nVcC.75YZSZU1Fq6G6buYujG.dolGYGPboh7eQbt
 COMMIT;
 
 -- ----------------------------
--- Table structure for oauth2_third_Account
--- ----------------------------
-DROP TABLE IF EXISTS `oauth2_third_Account`;
-CREATE TABLE `oauth2_third_account`
-(
-    `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-    `user_id`     int(11) NULL DEFAULT NULL COMMENT '用户表主键',
-    `unique_id`   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '三方登录唯一id',
-    `type`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '三方登录类型',
-    `blog`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '博客地址',
-    `location`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '地址',
-    `create_time` datetime(0) NULL DEFAULT NULL COMMENT '绑定时间',
-    `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '三方登录账户信息表';
-
--- ----------------------------
 -- Table structure for sys_authority
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_authority`;

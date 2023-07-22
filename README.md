@@ -20,6 +20,8 @@
 
 授权码模式使用前后端分离的登录页面
 
+联合身份认证(现已集成Github、Gitee登录)
+
 ## 项目环境要求
 
 **Java版本大于等于17**
@@ -59,6 +61,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://juejin.cn/post/7245538214114492474)**<br>
 **[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://juejin.cn/post/7246409673565372475)**<br>
 **[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://juejin.cn/post/7254096495184134181)**<br>
+**[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://juejin.cn/post/7258466145653096504)**<br>
 
 ### CSDN
 
@@ -74,3 +77,4 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://blog.csdn.net/weixin_43356507/article/details/131262461)**<br>
 **[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://blog.csdn.net/weixin_43356507/article/details/131297456)**<br>
 **[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://blog.csdn.net/weixin_43356507/article/details/131650660)**<br>
+**[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://juejin.cn/post/https://blog.csdn.net/weixin_43356507/article/details/131872353)**<br>

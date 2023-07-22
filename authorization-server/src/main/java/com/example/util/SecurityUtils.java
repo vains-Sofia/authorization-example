@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -64,10 +63,8 @@ public class SecurityUtils {
         Map<String, String[]> parameterMap = request.getParameterMap();
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>(parameterMap.size());
         parameterMap.forEach((key, values) -> {
-            if (values.length > 0) {
-                for (String value : values) {
-                    parameters.add(key, value);
-                }
+            for (String value : values) {
+                parameters.add(key, value);
             }
         });
         return parameters;

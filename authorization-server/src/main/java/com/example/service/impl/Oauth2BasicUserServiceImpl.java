@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.entity.Oauth2BasicUser;
-import com.example.entity.SysAuthority;
-import com.example.entity.SysRoleAuthority;
-import com.example.entity.SysUserRole;
+import com.example.entity.*;
 import com.example.mapper.Oauth2BasicUserMapper;
 import com.example.mapper.SysAuthorityMapper;
 import com.example.mapper.SysRoleAuthorityMapper;
@@ -75,5 +72,16 @@ public class Oauth2BasicUserServiceImpl extends ServiceImpl<Oauth2BasicUserMappe
         Set<CustomGrantedAuthority> authorities = Optional.ofNullable(menus).orElse(Collections.emptyList()).stream().map(SysAuthority::getUrl).map(CustomGrantedAuthority::new).collect(Collectors.toSet());
         basicUser.setAuthorities(authorities);
         return basicUser;
+    }
+
+    @Override
+    public Integer saveByThirdAccount(Oauth2ThirdAccount thirdAccount) {
+        Oauth2BasicUser basicUser = new Oauth2BasicUser();
+        basicUser.setName(thirdAccount.getName());
+        basicUser.setAvatarUrl(thirdAccount.getAvatarUrl());
+        basicUser.setDeleted(Boolean.FALSE);
+        basicUser.setSourceFrom(thirdAccount.getType());
+        this.save(basicUser);
+        return basicUser.getId();
     }
 }
