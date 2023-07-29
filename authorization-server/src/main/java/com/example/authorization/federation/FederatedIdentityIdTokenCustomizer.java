@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.constant.SecurityConstants.THIRD_LOGIN_WECHAT;
+
 /**
  * An {@link OAuth2TokenCustomizer} to map claims from a federated identity to
  * the {@code id_token} produced by this authorization server.
@@ -62,6 +64,15 @@ public final class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCust
             if (loginType instanceof String) {
                 // 同时检验是否为String和是否不为空
                 claims.claim("loginType", loginType);
+                Object uniqueId;
+                if (THIRD_LOGIN_WECHAT.equals(loginType)) {
+                    uniqueId = user.getAttribute("openid");
+                } else {
+                    uniqueId = user.getAttribute("id");
+                }
+                if (uniqueId != null) {
+                    claims.claim("uniqueId", String.valueOf(uniqueId));
+                }
             }
         }
 

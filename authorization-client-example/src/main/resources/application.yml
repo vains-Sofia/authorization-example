@@ -10,7 +10,7 @@ spring:
           # 认证提供者,自定义名称
           custom-issuer:
             # Token签发地址(认证服务地址)
-            issuer-uri: http://192.168.120.33:8080
+            issuer-uri: http://192.168.1.102:8080
             # 获取用户信息的地址，默认的/userinfo端点需要IdToken获取，为避免麻烦自定一个用户信息接口
             user-info-uri: ${spring.security.oauth2.client.provider.custom-issuer.issuer-uri}/user
         registration:
@@ -32,4 +32,4 @@ spring:
             scope:
               - message.read
               - message.write
-
+              - openid

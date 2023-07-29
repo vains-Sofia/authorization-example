@@ -2,20 +2,22 @@ package com.example.strategy.impl;
 
 import com.example.entity.Oauth2ThirdAccount;
 import com.example.strategy.Oauth2UserConverterStrategy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.example.constant.SecurityConstants.THIRD_LOGIN_GITEE;
+import static com.example.constant.SecurityConstants.THIRD_LOGIN_WECHAT;
 
 /**
- * 转换通过码云登录的用户信息
+ * 微信用户信息转换器
  *
  * @author vains
  */
-@Component(THIRD_LOGIN_GITEE)
-public class GiteeUserConverter implements Oauth2UserConverterStrategy {
+@RequiredArgsConstructor
+@Component(THIRD_LOGIN_WECHAT)
+public class WechatUserConverter implements Oauth2UserConverterStrategy {
 
     @Override
     public Oauth2ThirdAccount convert(OAuth2User oAuth2User) {
@@ -23,13 +25,13 @@ public class GiteeUserConverter implements Oauth2UserConverterStrategy {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         // 转换至Oauth2ThirdAccount
         Oauth2ThirdAccount thirdAccount = new Oauth2ThirdAccount();
-        thirdAccount.setUniqueId(String.valueOf(attributes.get("id")));
+        thirdAccount.setUniqueId(String.valueOf(attributes.get("openid")));
         thirdAccount.setThirdUsername(oAuth2User.getName());
-        thirdAccount.setType(THIRD_LOGIN_GITEE);
-        thirdAccount.setBlog(String.valueOf(attributes.get("blog")));
+        thirdAccount.setType(THIRD_LOGIN_WECHAT);
+        thirdAccount.setLocation(attributes.get("province")+ " " + attributes.get("city"));
         // 设置基础用户信息
         thirdAccount.setName(oAuth2User.getName());
-        thirdAccount.setAvatarUrl(String.valueOf(attributes.get("avatar_url")));
+        thirdAccount.setAvatarUrl(String.valueOf(attributes.get("headimgurl")));
         return thirdAccount;
     }
 }

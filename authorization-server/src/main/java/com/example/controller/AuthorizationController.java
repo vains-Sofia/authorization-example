@@ -19,7 +19,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -67,7 +66,7 @@ public class AuthorizationController {
         // 获取jwt解析内容
         Jwt token = jwtAuthenticationToken.getToken();
         // 获取当前用户的账号
-        String account = token.getClaim(JwtClaimNames.SUB);
+        String account = token.getClaim("uniqueId");
         // 获取scope
         List<String> scopes = token.getClaimAsStringList("scope");
         List<String> claimAsStringList = token.getClaimAsStringList(SecurityConstants.AUTHORITIES_KEY);

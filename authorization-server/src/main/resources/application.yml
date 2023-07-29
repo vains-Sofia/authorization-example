@@ -17,9 +17,9 @@ spring:
             # 认证方式
             authorization-grant-type: authorization_code
             # 客户端id，使用自己的gitee的客户端id
-            client-id:
+            client-id: dd8de6dfa9674cc307e18ca75616a0ded06126ddc4f95098da36e1fbfa141d0a
             # 客户端秘钥，使用自己的gitee的客户端秘钥
-            client-secret:
+            client-secret: 59b069e525b84cac8fcb854148b623743eefd6bbe9d54433c006ec0c2f785c4d
             # 回调地址
             redirect-uri: http://192.168.1.102:8080/login/oauth2/code/gitee
             # 申请scope列表
@@ -29,20 +29,48 @@ spring:
           github:
             # security client默认实现了GitHub提供的oauth2登录
             provider: github
-            client-id:
-            client-secret:
+            client-id: 88c69e87b2e50d2dab4d
+            client-secret: 350b351e8287fc142d01082bcf0dc5c6df7c21ae
+          wechat:
+            # 微信登录配置
+            provider: wechat
+            # 客户端名字
+            client-name: Sign in with WeChat
+            # 认证方式
+            authorization-grant-type: authorization_code
+            # 客户端id，使用自己的微信的appid
+            client-id: wx946ad2f955901214
+            # 客户端秘钥，使用自己的微信的app secret
+            client-secret: e4635ff2ed22c83294394ac818cf75a7
+            # 回调地址
+            redirect-uri: http://192.168.1.102:8080/login/oauth2/code/wechat
+            # 申请scope列表
+            scope: snsapi_userinfo
+
         # oauth登录提供商
         provider:
+          # 微信的OAuth2端点配置
+          wechat:
+            # 设置用户信息响应体中账号的字段
+            user-name-attribute: nickname
+            # 获取token的地址
+            token-uri: https://api.weixin.qq.com/sns/oauth2/access_token
+            # 获取用户信息的地址
+            user-info-uri: https://api.weixin.qq.com/sns/userinfo
+            # 发起授权申请的地址
+            authorization-uri: https://open.weixin.qq.com/connect/oauth2/authorize
           # gitee的OAuth2端点配置
           gitee:
             # 设置用户信息响应体中账号的字段
-            user-name-attribute: id
+            user-name-attribute: login
             # 获取token的地址
             token-uri: https://gitee.com/oauth/token
             # 获取用户信息的地址
             user-info-uri: https://gitee.com/api/v5/user
             # 发起授权申请的地址
             authorization-uri: https://gitee.com/oauth/authorize
+          github:
+            user-name-attribute: login
 
 # Mybatis-Plus 配置
 mybatis-plus:

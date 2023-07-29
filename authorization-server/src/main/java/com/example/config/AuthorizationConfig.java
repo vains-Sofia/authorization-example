@@ -8,6 +8,9 @@ import com.example.authorization.handler.LoginSuccessHandler;
 import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationConverter;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
+import com.example.authorization.wechat.WechatAuthorizationRequestConsumer;
+import com.example.authorization.wechat.WechatCodeGrantRequestEntityConverter;
+import com.example.authorization.wechat.WechatMapAccessTokenResponseConverter;
 import com.example.constant.RedisConstants;
 import com.example.constant.SecurityConstants;
 import com.example.support.RedisOperator;
@@ -23,6 +26,7 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,8 +38,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
@@ -59,6 +71,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -67,6 +80,9 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -182,14 +198,14 @@ public class AuthorizationConfig {
     }
 
     /**
-     * 配置认证相关的过滤器链
+     * 配置认证相关的过滤器链(资源服务，客户端配置)
      *
      * @param http spring security核心配置类
      * @return 过滤器链
      * @throws Exception 抛出
      */
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         // 添加跨域过滤器
         http.addFilter(corsFilter());
         // 禁用 csrf 与 cors
@@ -227,16 +243,64 @@ public class AuthorizationConfig {
                             )
                     );
         }
-        // 联合登录配置
-        http.oauth2Login(oauth2Login ->
-                oauth2Login
-                        .loginPage(LOGIN_URL)
+        // 联合身份认证
+        http.oauth2Login(oauth2Login -> oauth2Login
+                .loginPage(LOGIN_URL)
+                .authorizationEndpoint(authorization -> authorization
+                        .authorizationRequestResolver(this.authorizationRequestResolver(clientRegistrationRepository))
+                )
+                .tokenEndpoint(token -> token
+                        .accessTokenResponseClient(this.accessTokenResponseClient())
+                )
         );
 
         // 使用redis存储、读取登录的认证信息
         http.securityContext(context -> context.securityContextRepository(redisSecurityContextRepository));
 
         return http.build();
+    }
+
+    /**
+     * AuthorizationRequest 自定义配置
+     *
+     * @param clientRegistrationRepository yml配置中客户端信息存储类
+     * @return OAuth2AuthorizationRequestResolver
+     */
+    private OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository) {
+        DefaultOAuth2AuthorizationRequestResolver authorizationRequestResolver =
+                new DefaultOAuth2AuthorizationRequestResolver(
+                        clientRegistrationRepository, "/oauth2/authorization");
+
+        // 兼容微信登录授权申请
+        authorizationRequestResolver.setAuthorizationRequestCustomizer(new WechatAuthorizationRequestConsumer());
+
+        return authorizationRequestResolver;
+    }
+
+    /**
+     * 适配微信登录适配，添加自定义请求token入参处理
+     *
+     * @return OAuth2AccessTokenResponseClient accessToken响应信息处理
+     */
+    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient tokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+        tokenResponseClient.setRequestEntityConverter(new WechatCodeGrantRequestEntityConverter());
+        // 自定义 RestTemplate，适配微信登录获取token
+        OAuth2AccessTokenResponseHttpMessageConverter messageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
+        List<MediaType> mediaTypes = new ArrayList<>(messageConverter.getSupportedMediaTypes());
+        // 微信获取token时响应的类型为“text/plain”，这里特殊处理一下
+        mediaTypes.add(MediaType.TEXT_PLAIN);
+        messageConverter.setAccessTokenResponseConverter(new WechatMapAccessTokenResponseConverter());
+        messageConverter.setSupportedMediaTypes(mediaTypes);
+
+        // 初始化RestTemplate
+        RestTemplate restTemplate = new RestTemplate(Arrays.asList(
+                new FormHttpMessageConverter(),
+                messageConverter));
+
+        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
+        tokenResponseClient.setRestOperations(restTemplate);
+        return tokenResponseClient;
     }
 
     /**

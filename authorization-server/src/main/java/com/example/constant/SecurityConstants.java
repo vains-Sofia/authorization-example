@@ -8,6 +8,31 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
+     * 微信登录相关参数——openid：用户唯一id
+     */
+    public static final String WECHAT_PARAMETER_OPENID = "openid";
+
+    /**
+     * 微信登录相关参数——forcePopup：强制此次授权需要用户弹窗确认
+     */
+    public static final String WECHAT_PARAMETER_FORCE_POPUP = "forcePopup";
+
+    /**
+     * 微信登录相关参数——secret：微信的应用秘钥
+     */
+    public static final String WECHAT_PARAMETER_SECRET = "secret";
+
+    /**
+     * 微信登录相关参数——appid：微信的应用id
+     */
+    public static final String WECHAT_PARAMETER_APPID = "appid";
+
+    /**
+     * 三方登录类型——微信
+     */
+    public static final String THIRD_LOGIN_WECHAT = "wechat";
+
+    /**
      * 三方登录类型——Gitee
      */
     public static final String THIRD_LOGIN_GITEE = "gitee";
