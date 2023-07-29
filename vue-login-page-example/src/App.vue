@@ -13,7 +13,7 @@ const loginModel = ref({
   password: '',
   loginType: '',
   captchaId: '',
-  nonce: getQueryString('nonce')
+  nonceId: getQueryString('nonceId')
 })
 
 // 图形验证码的base64数据
@@ -51,7 +51,7 @@ const submitLogin = () => {
     method: 'post',
     url: 'http://192.168.1.102:8080/login',
     headers: {
-      nonce: loginModel.value.nonce,
+      nonceId: loginModel.value.nonceId,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     data: loginModel.value
@@ -78,7 +78,7 @@ const submitSmsLogin = () => {
     method: 'post',
     url: 'http://192.168.1.102:8080/login',
     headers: {
-      nonce: loginModel.value.nonce,
+      nonceId: loginModel.value.nonceId,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     data: loginModel.value
