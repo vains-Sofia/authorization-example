@@ -3,9 +3,7 @@ package com.example.config;
 import com.example.authorization.device.DeviceClientAuthenticationConverter;
 import com.example.authorization.device.DeviceClientAuthenticationProvider;
 import com.example.authorization.federation.FederatedIdentityIdTokenCustomizer;
-import com.example.authorization.handler.LoginFailureHandler;
-import com.example.authorization.handler.LoginSuccessHandler;
-import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
+import com.example.authorization.handler.*;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationConverter;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
 import com.example.authorization.wechat.WechatAuthorizationRequestConsumer;
@@ -86,6 +84,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.constant.SecurityConstants.CONSENT_PAGE_URI;
+import static com.example.constant.SecurityConstants.DEVICE_ACTIVATE_URI;
+
 /**
  * 认证配置
  * {@link EnableMethodSecurity} 开启全局方法认证，启用JSR250注解支持，启用注解 {@link Secured} 支持，
@@ -108,9 +109,11 @@ public class AuthorizationConfig {
     /**
      * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
      */
-    private final String LOGIN_URL = "/login";
+    private final String LOGIN_URL = "http://127.0.0.1:5173/login";
 
-    private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
+    private static final String CUSTOM_CONSENT_REDIRECT_URI = "/oauth2/consent/redirect";
+
+    private static final String CUSTOM_DEVICE_REDIRECT_URI = "/activate/redirect";
 
     private final RedisSecurityContextRepository redisSecurityContextRepository;
 
@@ -128,6 +131,12 @@ public class AuthorizationConfig {
         // 配置默认的设置，忽略认证端点的csrf校验
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
+        // 添加跨域过滤器
+        http.addFilter(corsFilter());
+        // 禁用 csrf 与 cors
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(AbstractHttpConfigurer::disable);
+
         // 新建设备码converter和provider
         DeviceClientAuthenticationConverter deviceClientAuthenticationConverter =
                 new DeviceClientAuthenticationConverter(
@@ -142,14 +151,38 @@ public class AuthorizationConfig {
                 // 开启OpenID Connect 1.0协议相关端点
                 .oidc(Customizer.withDefaults())
                 // 设置自定义用户确认授权页
-                .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI))
+                .authorizationEndpoint(authorizationEndpoint -> {
+                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
+                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
+                            // 如果是分离页面则重定向，否则转发请求
+                            authorizationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
+                            if (absoluteUrl) {
+                                // 适配前后端分离的授权确认页面，成功/失败响应json
+                                authorizationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
+                                authorizationEndpoint.authorizationResponseHandler(new ConsentAuthorizationResponseHandler());
+                            }
+                        }
+                )
                 // 设置设备码用户验证url(自定义用户验证页)
                 .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
-                        deviceAuthorizationEndpoint.verificationUri("/activate")
+                        deviceAuthorizationEndpoint.verificationUri(UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) ? CUSTOM_DEVICE_REDIRECT_URI : DEVICE_ACTIVATE_URI)
                 )
                 // 设置验证设备码用户确认页面
-                .deviceVerificationEndpoint(deviceVerificationEndpoint ->
-                        deviceVerificationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI)
+                .deviceVerificationEndpoint(deviceVerificationEndpoint -> {
+                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
+                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
+                            // 如果是分离页面则重定向，否则转发请求
+                            deviceVerificationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
+                            if (absoluteUrl) {
+                                // 适配前后端分离的授权确认页面，失败响应json
+                                deviceVerificationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
+                            }
+                            // 如果授权码验证页面或者授权确认页面是前后端分离的
+                            if (UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) || absoluteUrl) {
+                                // 添加响应json处理
+                                deviceVerificationEndpoint.deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler());
+                            }
+                        }
                 )
                 .clientAuthentication(clientAuthentication ->
                         // 客户端认证添加设备码的converter和provider
@@ -214,7 +247,7 @@ public class AuthorizationConfig {
         http.cors(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源
-                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha", "/error").permitAll()
+                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha", "/error", "/oauth2/consent/parameters").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 指定登录页面
@@ -234,16 +267,14 @@ public class AuthorizationConfig {
                 .authenticationEntryPoint(SecurityUtils::exceptionHandler)
         );
         // 兼容前后端分离与不分离配置
-        if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
-            http
-                    // 当未登录时访问认证端点时重定向至login页面
-                    .exceptionHandling((exceptions) -> exceptions
-                            .defaultAuthenticationEntryPointFor(
-                                    new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
-                                    new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                            )
-                    );
-        }
+        http
+                // 当未登录时访问认证端点时重定向至login页面
+                .exceptionHandling((exceptions) -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
+                );
         // 联合身份认证
         http.oauth2Login(oauth2Login -> oauth2Login
                 .loginPage(LOGIN_URL)
@@ -317,6 +348,7 @@ public class AuthorizationConfig {
 
         // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
+        configuration.addAllowedOrigin("http://192.168.1.102:5173");
         // 设置跨域访问可以携带cookie
         configuration.setAllowCredentials(true);
         // 允许所有的请求方法 ==> GET POST PUT Delete
