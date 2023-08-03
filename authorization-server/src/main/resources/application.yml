@@ -17,9 +17,9 @@ spring:
             # 认证方式
             authorization-grant-type: authorization_code
             # 客户端id，使用自己的gitee的客户端id
-            client-id:
+            client-id: dd8de6dfa9674cc307e18ca75616a0ded06126ddc4f95098da36e1fbfa141d0a
             # 客户端秘钥，使用自己的gitee的客户端秘钥
-            client-secret:
+            client-secret: 59b069e525b84cac8fcb854148b623743eefd6bbe9d54433c006ec0c2f785c4d
             # 回调地址
             redirect-uri: http://192.168.1.102:8080/login/oauth2/code/gitee
             # 申请scope列表
@@ -29,8 +29,8 @@ spring:
           github:
             # security client默认实现了GitHub提供的oauth2登录
             provider: github
-            client-id:
-            client-secret:
+            client-id: 88c69e87b2e50d2dab4d
+            client-secret: 350b351e8287fc142d01082bcf0dc5c6df7c21ae
           wechat:
             # 微信登录配置
             provider: wechat
@@ -39,9 +39,9 @@ spring:
             # 认证方式
             authorization-grant-type: authorization_code
             # 客户端id，使用自己的微信的appid
-            client-id:
+            client-id: wx946ad2f955901214
             # 客户端秘钥，使用自己的微信的app secret
-            client-secret:
+            client-secret: e4635ff2ed22c83294394ac818cf75a7
             # 回调地址
             redirect-uri: http://192.168.1.102:8080/login/oauth2/code/wechat
             # 申请scope列表
@@ -71,6 +71,8 @@ spring:
             authorization-uri: https://gitee.com/oauth/authorize
           github:
             user-name-attribute: login
+  jackson:
+    default-property-inclusion: non_null
 
 # Mybatis-Plus 配置
 mybatis-plus:

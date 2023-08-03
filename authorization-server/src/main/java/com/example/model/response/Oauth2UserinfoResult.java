@@ -20,6 +20,11 @@ public class Oauth2UserinfoResult {
     private Integer id;
 
     /**
+     * 用户账号
+     */
+    private String sub;
+
+    /**
      * 用户名、昵称
      */
     private String name;

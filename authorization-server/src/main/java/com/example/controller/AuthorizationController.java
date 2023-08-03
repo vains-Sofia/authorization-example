@@ -19,10 +19,12 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -75,13 +77,25 @@ public class AuthorizationController {
     @GetMapping("/user")
     public Oauth2UserinfoResult user(Principal principal) {
         Oauth2UserinfoResult result = new Oauth2UserinfoResult();
+
+        // 账号密码模式登陆
+        if (principal instanceof UsernamePasswordAuthenticationToken token) {
+            if (token.getPrincipal() instanceof Oauth2BasicUser user) {
+                BeanUtils.copyProperties(user, result);
+                result.setSub(principal.getName());
+                return result;
+            }
+
+        }
+
         if (!(principal instanceof JwtAuthenticationToken jwtAuthenticationToken)) {
             return result;
         }
         // 获取jwt解析内容
         Jwt token = jwtAuthenticationToken.getToken();
+        Object uniqueId = token.getClaim("uniqueId");
         // 获取当前用户的账号
-        String account = token.getClaim("uniqueId");
+        String account = uniqueId == null ? principal.getName() : (String) uniqueId;
         // 获取scope
         List<String> scopes = token.getClaimAsStringList("scope");
         List<String> claimAsStringList = token.getClaimAsStringList(SecurityConstants.AUTHORITIES_KEY);
@@ -95,6 +109,9 @@ public class AuthorizationController {
             // 填充用户的权限信息
             this.fillUserAuthority(claimAsStringList, basicUser, scopes);
             BeanUtils.copyProperties(basicUser, result);
+            // 设置idToken的sub信息
+            String sub = token.getClaimAsString(JwtClaimNames.SUB);
+            result.setSub(sub);
             // 根据用户信息查询三方登录信息
             LambdaQueryWrapper<Oauth2ThirdAccount> userIdWrapper =
                     Wrappers.lambdaQuery(Oauth2ThirdAccount.class)
@@ -123,6 +140,9 @@ public class AuthorizationController {
         this.fillUserAuthority(claimAsStringList, oauth2BasicUser, scopes);
         // 复制基础用户信息
         BeanUtils.copyProperties(oauth2BasicUser, result);
+        // 设置idToken的sub信息
+        String sub = token.getClaimAsString(JwtClaimNames.SUB);
+        result.setSub(sub);
         // 设置三方用户信息
         result.setLocation(oauth2ThirdAccount.getLocation());
         result.setCredentials(oauth2ThirdAccount.getCredentials());

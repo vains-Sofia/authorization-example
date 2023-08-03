@@ -13,6 +13,7 @@ spring:
             issuer-uri: http://192.168.1.102:8080
             # 获取用户信息的地址，默认的/userinfo端点需要IdToken获取，为避免麻烦自定一个用户信息接口
             user-info-uri: ${spring.security.oauth2.client.provider.custom-issuer.issuer-uri}/user
+            user-name-attribute: name
         registration:
           messaging-client-oidc:
             # oauth认证提供者配置，和上边配置的认证提供者关联起来
@@ -33,3 +34,4 @@ spring:
               - message.read
               - message.write
               - openid
+              - profile
