@@ -84,8 +84,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.constant.SecurityConstants.CONSENT_PAGE_URI;
-import static com.example.constant.SecurityConstants.DEVICE_ACTIVATE_URI;
+import static com.example.constant.SecurityConstants.*;
 
 /**
  * 认证配置
@@ -105,11 +104,6 @@ import static com.example.constant.SecurityConstants.DEVICE_ACTIVATE_URI;
 public class AuthorizationConfig {
 
     private final RedisOperator<String> redisOperator;
-
-    /**
-     * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
-     */
-    private final String LOGIN_URL = "http://127.0.0.1:5173/login";
 
     private static final String CUSTOM_CONSENT_REDIRECT_URI = "/oauth2/consent/redirect";
 
@@ -349,6 +343,7 @@ public class AuthorizationConfig {
         // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
         configuration.addAllowedOrigin("http://192.168.1.102:5173");
+        configuration.addAllowedOrigin("https://vains-sofia.gitee.io");
         // 设置跨域访问可以携带cookie
         configuration.setAllowCredentials(true);
         // 允许所有的请求方法 ==> GET POST PUT Delete

@@ -8,6 +8,11 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
+     * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
+     */
+    public static final String LOGIN_URL = "http://127.0.0.1:5173/login";
+
+    /**
      * 授权确认页面地址
      */
     public static final String DEVICE_ACTIVATED_URI = "http://127.0.0.1:5173/activated";

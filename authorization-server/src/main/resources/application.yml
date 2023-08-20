@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/authorization-example?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/authorization-example?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8&ssl-mode=REQUIRED
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:root}
   security:
@@ -75,7 +75,7 @@ spring:
     default-property-inclusion: non_null
   data:
     redis:
-      url: ${REIDS_URL:redis://127.0.0.1:6379}
+      url: ${REDIS_URL:redis://127.0.0.1:6379}
 
 # Mybatis-Plus 配置
 mybatis-plus:
