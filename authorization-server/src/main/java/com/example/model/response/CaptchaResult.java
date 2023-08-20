@@ -2,6 +2,7 @@ package com.example.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 获取验证码返回
@@ -9,6 +10,7 @@ import lombok.Data;
  * @author vains
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class CaptchaResult {
 

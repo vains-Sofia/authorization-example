@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/authorization-example?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/authorization-example?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
   security:
     oauth2:
       client:
@@ -73,6 +73,9 @@ spring:
             user-name-attribute: login
   jackson:
     default-property-inclusion: non_null
+  data:
+    redis:
+      url: ${REIDS_URL:redis://127.0.0.1:6379}
 
 # Mybatis-Plus 配置
 mybatis-plus:
