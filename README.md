@@ -45,8 +45,6 @@ authorization-example # 最外层目录
  └─vue-login-page-example # 前后端登录中的前端模块
 ```
 
-**如果各位觉得项目或文章还不错的，麻烦帮忙点个star，谢谢**
-
 ## 文章地址
 
 ### 掘金
@@ -84,3 +82,9 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://blog.csdn.net/weixin_43356507/article/details/131872353)**<br>
 **[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://blog.csdn.net/weixin_43356507/article/details/131998050)**<br>
 **[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://blog.csdn.net/weixin_43356507/article/details/132052355)**<br>
+
+## 赞赏
+
+**如果各位觉得项目或文章还不错的，麻烦帮忙点个star，谢谢**
+**也可以通过下方二维码进行赞赏，请作者喝一杯Coffee，非常感谢！**
+![Reward](images/Reward.jpg)
