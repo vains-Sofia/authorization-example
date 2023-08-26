@@ -45,6 +45,14 @@ authorization-example # 最外层目录
  ├─vue-login-page-example # 前后端登录中的前端模块
  │  
  └─gateway-example # 网关集成OAuth2认证服务示例
+ 	 │  
+     ├─gateway-client-example # 网关
+     │  
+     ├─normal-resource-example # webmvc资源服务
+     │  
+     ├─webflux-resource-example # webflux资源服务
+     │  
+     └─pom.xml # 公共依赖，依赖管理
 ```
 
 ## 文章地址
@@ -66,6 +74,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://juejin.cn/post/7258466145653096504)**<br>
 **[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://juejin.cn/post/7261098261142208568)**<br>
 **[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://juejin.cn/post/7262317630307205176)**<br>
+**[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://juejin.cn/spost/7271496874942890024)**<br>
 
 ### CSDN
 
@@ -84,6 +93,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://blog.csdn.net/weixin_43356507/article/details/131872353)**<br>
 **[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://blog.csdn.net/weixin_43356507/article/details/131998050)**<br>
 **[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://blog.csdn.net/weixin_43356507/article/details/132052355)**<br>
+**[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132517747)**<br>
 
 ## 赞赏
 
