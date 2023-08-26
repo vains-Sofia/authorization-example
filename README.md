@@ -42,7 +42,9 @@ authorization-example # 最外层目录
  │  
  ├─resource-server-example # Resource Server集成示例
  │  
- └─vue-login-page-example # 前后端登录中的前端模块
+ ├─vue-login-page-example # 前后端登录中的前端模块
+ │  
+ └─gateway-example # 网关集成OAuth2认证服务示例
 ```
 
 ## 文章地址
@@ -88,3 +90,13 @@ authorization-example # 最外层目录
 **如果各位觉得项目或文章还不错的，麻烦帮忙点个star，谢谢**
 **也可以通过下方二维码进行赞赏，请作者喝一杯Coffee，非常感谢！**
 ![Reward](images/Reward.jpg)
+
+
+
+## 感谢人列表
+
+| 赞助人昵称 | 金额 | 赞助方式 | 附言               |
+| ---------- | ---- | -------- | ------------------ |
+| 寒雨潇何   | 10   | 赞赏码   | 感谢老哥的无私付出 |
+| 寒雨潇何   | 10   | 赞赏码   | 再次感谢老哥的指导 |
+

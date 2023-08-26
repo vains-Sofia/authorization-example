@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    nacos:
+      serverAddr: 127.0.0.1:8848
+  config:
+    import:
+      - nacos:webflux.yml?refresh=true
+  application:
+    name: webflux-resource
