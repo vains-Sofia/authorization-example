@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
 import reactor.core.publisher.Mono;
 
 /**
@@ -56,11 +55,11 @@ public class ResourceServerConfig {
 
         // 设置当前服务为资源服务，解析请求头中的token
         http.oauth2ResourceServer((resourceServer) -> resourceServer
-                // 使用jwt
-                .jwt(jwt -> jwt
-                        // 请求中携带token访问时会触发该解析器适配器
-                        .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
-                )
+                        // 使用jwt
+                        .jwt(jwt -> jwt
+                                // 请求中携带token访问时会触发该解析器适配器
+                                .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
+                        )
                 /*
                 // xhr请求未携带Token处理
                 .authenticationEntryPoint(this::authenticationEntryPoint)
