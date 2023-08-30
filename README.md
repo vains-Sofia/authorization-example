@@ -45,7 +45,7 @@ authorization-example # 最外层目录
  ├─vue-login-page-example # 前后端登录中的前端模块
  │  
  └─gateway-example # 网关集成OAuth2认证服务示例
- 	 │  
+     │  
      ├─gateway-client-example # 网关
      │  
      ├─normal-resource-example # webmvc资源服务
@@ -109,4 +109,8 @@ authorization-example # 最外层目录
 | ---------- | ---- | -------- | ------------------ |
 | 寒雨潇何   | 10   | 赞赏码   | 感谢老哥的无私付出 |
 | 寒雨潇何   | 10   | 赞赏码   | 再次感谢老哥的指导 |
+| 唐亚峰 &#124; battcn   | 88   | 微信红包   | 喝杯咖啡 |
+
+
+**非常感谢以上小伙伴的打赏！感谢**
 
