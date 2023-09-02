@@ -30,4 +30,9 @@ public class TestController {
         return "app";
     }
 
+    @GetMapping("/test03")
+    public String test03() {
+        return "test03";
+    }
+
 }

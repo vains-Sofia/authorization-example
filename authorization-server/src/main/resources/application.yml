@@ -21,7 +21,7 @@ spring:
             # 客户端秘钥，使用自己的gitee的客户端秘钥
             client-secret: 59b069e525b84cac8fcb854148b623743eefd6bbe9d54433c006ec0c2f785c4d
             # 回调地址
-            redirect-uri: http://192.168.1.102:8080/login/oauth2/code/gitee
+            redirect-uri: http://192.168.119.1:8080/login/oauth2/code/gitee
             # 申请scope列表
             scope:
               - emails
@@ -43,7 +43,7 @@ spring:
             # 客户端秘钥，使用自己的微信的app secret
             client-secret: e4635ff2ed22c83294394ac818cf75a7
             # 回调地址
-            redirect-uri: http://192.168.1.102:8080/login/oauth2/code/wechat
+            redirect-uri: http://192.168.119.1:8080/login/oauth2/code/wechat
             # 申请scope列表
             scope: snsapi_userinfo
 
@@ -82,3 +82,19 @@ mybatis-plus:
   # 扫描mapper文件
   mapper-locations:
     - classpath:com/vains/mapper/xml/*Mapper.xml
+
+custom:
+  # 自定义认证配置
+  security:
+    # 登录页面路径
+    login-url: /login
+    # 授权确认页面路径
+    consent-page-uri: /oauth2/consent
+    # 设备码验证页面
+    device-activate-uri: /activate
+    # 设备码验证成功页面
+    device-activated-uri: /activated
+    # 不需要认证的地址
+    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03
+    # 当前认证服务访问的路径
+    issuer-url: http://192.168.119.1:8080

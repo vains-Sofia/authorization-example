@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static com.example.constant.SecurityConstants.DEVICE_ACTIVATE_URI;
-
 /**
  * 重定向至登录处理
  *
@@ -31,15 +29,19 @@ import static com.example.constant.SecurityConstants.DEVICE_ACTIVATE_URI;
 @Slf4j
 public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
+    private final String deviceActivateUri;
+
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     /**
-     * @param loginFormUrl URL where the login page can be found. Should either be
-     *                     relative to the web-app context path (include a leading {@code /}) or an absolute
-     *                     URL.
+     * @param loginFormUrl      URL where the login page can be found. Should either be
+     *                          relative to the web-app context path (include a leading {@code /}) or an absolute
+     *                          URL.
+     * @param deviceActivateUri 设备码验证页面地址
      */
-    public LoginTargetAuthenticationEntryPoint(String loginFormUrl) {
+    public LoginTargetAuthenticationEntryPoint(String loginFormUrl, String deviceActivateUri) {
         super(loginFormUrl);
+        this.deviceActivateUri = deviceActivateUri;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
         // 兼容设备码前后端分离
         if (request.getRequestURI().equals(deviceVerificationUri)
                 && request.getMethod().equals(HttpMethod.POST.name())
-                && UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI)) {
+                && UrlUtils.isAbsoluteUrl(deviceActivateUri)) {
             // 如果是请求验证设备激活码(user_code)时未登录并且设备码验证页面是前后端分离的那种则写回json
             Result<String> success = Result.error(HttpStatus.UNAUTHORIZED.value(), ("登录已失效，请重新打开设备提供的验证地址"));
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());

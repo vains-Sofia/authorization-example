@@ -5,6 +5,7 @@ import com.example.authorization.sms.SmsCaptchaGrantAuthenticationConverter;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
 import com.example.constant.RedisConstants;
 import com.example.constant.SecurityConstants;
+import com.example.property.CustomSecurityProperties;
 import com.example.support.RedisOperator;
 import com.example.support.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
@@ -23,21 +24,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
@@ -67,6 +63,8 @@ public class AuthorizationConfig {
 
     private final RedisOperator<String> redisOperator;
 
+    private final CustomSecurityProperties customSecurityProperties;
+
     private final RedisSecurityContextRepository redisSecurityContextRepository;
 
     /**
@@ -84,10 +82,10 @@ public class AuthorizationConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         // 添加基础的认证配置
-        SecurityUtils.applyBasicSecurity(http, redisSecurityContextRepository, corsFilter);
+        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties, redisSecurityContextRepository);
 
         // 设置设备码配置
-        SecurityUtils.applyDeviceSecurity(http, registeredClientRepository, authorizationServerSettings);
+        SecurityUtils.applyDeviceSecurity(http, customSecurityProperties, registeredClientRepository, authorizationServerSettings);
 
         // 自定义短信认证登录转换器
         SmsCaptchaGrantAuthenticationConverter converter = new SmsCaptchaGrantAuthenticationConverter();
@@ -172,83 +170,13 @@ public class AuthorizationConfig {
     /**
      * 配置客户端Repository
      *
-     * @param jdbcTemplate    db 数据源信息
-     * @param passwordEncoder 密码解析器
+     * @param jdbcTemplate db 数据源信息
      * @return 基于数据库的repository
      */
     @Bean
-    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                // 客户端id
-                .clientId("messaging-client")
-                // 客户端秘钥，使用密码解析器加密
-                .clientSecret(passwordEncoder.encode("123456"))
-                // 客户端认证方式，基于请求头的认证
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                // 配置资源服务器使用该客户端获取授权时支持的方式
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                // 客户端添加自定义认证
-                .authorizationGrantType(new AuthorizationGrantType(SecurityConstants.GRANT_TYPE_SMS_CODE))
-                // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
-                .redirectUri("https://www.baidu.com")
-                // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                // 自定scope
-                .scope("message.read")
-                .scope("message.write")
-                // 客户端设置，设置用户需要确认授权
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-
+    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         // 基于db存储客户端，还有一个基于内存的实现 InMemoryRegisteredClientRepository
-        JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
-
-        // 初始化客户端
-        RegisteredClient repositoryByClientId = registeredClientRepository.findByClientId(registeredClient.getClientId());
-        if (repositoryByClientId == null) {
-            registeredClientRepository.save(registeredClient);
-        }
-        // 设备码授权客户端
-        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("device-message-client")
-                // 公共客户端
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-                // 设备码授权
-                .authorizationGrantType(AuthorizationGrantType.DEVICE_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                // 自定scope
-                .scope("message.read")
-                .scope("message.write")
-                .build();
-        RegisteredClient byClientId = registeredClientRepository.findByClientId(deviceClient.getClientId());
-        if (byClientId == null) {
-            registeredClientRepository.save(deviceClient);
-        }
-
-        // PKCE客户端
-        RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("pkce-message-client")
-                // 公共客户端
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-                // 授权码模式，因为是扩展授权码流程，所以流程还是授权码的流程，改变的只是参数
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
-                .clientSettings(ClientSettings.builder().requireProofKey(Boolean.TRUE).build())
-                // 自定scope
-                .scope("message.read")
-                .scope("message.write")
-                .build();
-        RegisteredClient findPkceClient = registeredClientRepository.findByClientId(pkceClient.getClientId());
-        if (findPkceClient == null) {
-            registeredClientRepository.save(pkceClient);
-        }
-        return registeredClientRepository;
+        return new JdbcRegisteredClientRepository(jdbcTemplate);
     }
 
     /**
@@ -348,7 +276,7 @@ public class AuthorizationConfig {
                     设置token签发地址(http(s)://{ip}:{port}/context-path, http(s)://domain.com/context-path)
                     如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
                  */
-                .issuer("http://192.168.119.1:8080")
+                .issuer(customSecurityProperties.getIssuerUrl())
                 .build();
     }
 

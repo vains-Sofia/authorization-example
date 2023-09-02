@@ -8,34 +8,6 @@ package com.example.constant;
 public class SecurityConstants {
 
     /**
-     * 登录地址，前后端分离就填写完整的url路径，不分离填写相对路径
-     * 注意：不是前后端分离的项目不要写完整路径，当前项目部署的IP也不行！！！
-     * e.g. http://当前项目IP:当前项目端口/login
-     */
-    public static final String LOGIN_URL = "/login";
-
-    /**
-     * 授权确认页面地址
-     * 注意：不是前后端分离的项目不要写完整路径，当前项目部署的IP也不行！！！
-     * e.g. http://当前项目IP:当前项目端口/activated
-     */
-    public static final String DEVICE_ACTIVATED_URI = "/activated";
-
-    /**
-     * 授权确认页面地址
-     * 注意：不是前后端分离的项目不要写完整路径，当前项目部署的IP也不行！！！
-     * e.g. http://当前项目IP:当前项目端口/activate
-     */
-    public static final String DEVICE_ACTIVATE_URI = "/activate";
-
-    /**
-     * 授权确认页面地址
-     * 注意：不是前后端分离的项目不要写完整路径，当前项目部署的IP也不行！！！
-     * e.g. http://当前项目IP:当前项目端口/oauth2/consent
-     */
-    public static final String CONSENT_PAGE_URI = "/oauth2/consent";
-
-    /**
      * 微信登录相关参数——openid：用户唯一id
      */
     public static final String WECHAT_PARAMETER_OPENID = "openid";

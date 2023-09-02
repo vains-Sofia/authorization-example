@@ -4,6 +4,7 @@ import com.example.authorization.baisc.BasicAccessTokenResponseClient;
 import com.example.authorization.baisc.BasicAuthorizationRequestResolver;
 import com.example.authorization.handler.LoginFailureHandler;
 import com.example.authorization.handler.LoginSuccessHandler;
+import com.example.property.CustomSecurityProperties;
 import com.example.support.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.web.filter.CorsFilter;
-
-import static com.example.constant.SecurityConstants.LOGIN_URL;
 
 /**
  * 资源服务器配置
@@ -39,16 +38,16 @@ public class ResourceConfig {
 
     private final CorsFilter corsFilter;
 
+    /**
+     * 不需要认证即可访问的路径
+     */
+    private final CustomSecurityProperties customSecurityProperties;
+
     private final BasicAccessTokenResponseClient accessTokenResponseClient;
 
     private final RedisSecurityContextRepository redisSecurityContextRepository;
 
     private final BasicAuthorizationRequestResolver authorizationRequestResolver;
-
-    /**
-     * 不需要认证即可访问的路径
-     */
-    private final String[] ignoreUrls = {"/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha", "/error", "/oauth2/consent/parameters"};
 
     /**
      * 配置认证相关的过滤器链(资源服务，客户端配置)
@@ -60,17 +59,17 @@ public class ResourceConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // 添加基础的认证配置
-        SecurityUtils.applyBasicSecurity(http, redisSecurityContextRepository, corsFilter);
+        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties, redisSecurityContextRepository);
 
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源和不需要认证的url
-                        .requestMatchers(ignoreUrls).permitAll()
+                        .requestMatchers(customSecurityProperties.getIgnoreUriList().toArray(new String[0])).permitAll()
                         .anyRequest().authenticated()
                 )
                 // 指定登录页面
                 .formLogin(formLogin -> {
                             formLogin.loginPage("/login");
-                            if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
+                            if (UrlUtils.isAbsoluteUrl(customSecurityProperties.getLoginUrl())) {
                                 // 绝对路径代表是前后端分离，登录成功和失败改为写回json，不重定向了
                                 formLogin.successHandler(new LoginSuccessHandler());
                                 formLogin.failureHandler(new LoginFailureHandler());
@@ -80,7 +79,7 @@ public class ResourceConfig {
 
         // 联合身份认证
         http.oauth2Login(oauth2Login -> oauth2Login
-                .loginPage(LOGIN_URL)
+                .loginPage(customSecurityProperties.getLoginUrl())
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(this.authorizationRequestResolver)
                 )
