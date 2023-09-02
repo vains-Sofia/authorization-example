@@ -1,14 +1,8 @@
 package com.example.config;
 
-import com.example.authorization.device.DeviceClientAuthenticationConverter;
-import com.example.authorization.device.DeviceClientAuthenticationProvider;
 import com.example.authorization.federation.FederatedIdentityIdTokenCustomizer;
-import com.example.authorization.handler.*;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationConverter;
 import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
-import com.example.authorization.wechat.WechatAuthorizationRequestConsumer;
-import com.example.authorization.wechat.WechatCodeGrantRequestEntityConverter;
-import com.example.authorization.wechat.WechatMapAccessTokenResponseConverter;
 import com.example.constant.RedisConstants;
 import com.example.constant.SecurityConstants;
 import com.example.support.RedisOperator;
@@ -23,30 +17,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
-import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
@@ -67,47 +45,27 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.UrlUtils;
-import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-
-import static com.example.constant.SecurityConstants.*;
 
 /**
  * 认证配置
- * {@link EnableMethodSecurity} 开启全局方法认证，启用JSR250注解支持，启用注解 {@link Secured} 支持，
- * 在Spring Security 6.0版本中将@Configuration注解从@EnableWebSecurity, @EnableMethodSecurity, @EnableGlobalMethodSecurity
- * 和 @EnableGlobalAuthentication 中移除，使用这些注解需手动添加 @Configuration 注解
- * {@link EnableWebSecurity} 注解有两个作用:
- * 1. 加载了WebSecurityConfiguration配置类, 配置安全认证策略。
- * 2. 加载了AuthenticationConfiguration, 配置了认证信息。
  *
  * @author vains
  */
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class AuthorizationConfig {
 
+    private final CorsFilter corsFilter;
+
     private final RedisOperator<String> redisOperator;
-
-    private static final String CUSTOM_CONSENT_REDIRECT_URI = "/oauth2/consent/redirect";
-
-    private static final String CUSTOM_DEVICE_REDIRECT_URI = "/activate/redirect";
 
     private final RedisSecurityContextRepository redisSecurityContextRepository;
 
@@ -125,76 +83,11 @@ public class AuthorizationConfig {
         // 配置默认的设置，忽略认证端点的csrf校验
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
-        // 添加跨域过滤器
-        http.addFilter(corsFilter());
-        // 禁用 csrf 与 cors
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
+        // 添加基础的认证配置
+        SecurityUtils.applyBasicSecurity(http, redisSecurityContextRepository, corsFilter);
 
-        // 新建设备码converter和provider
-        DeviceClientAuthenticationConverter deviceClientAuthenticationConverter =
-                new DeviceClientAuthenticationConverter(
-                        authorizationServerSettings.getDeviceAuthorizationEndpoint());
-        DeviceClientAuthenticationProvider deviceClientAuthenticationProvider =
-                new DeviceClientAuthenticationProvider(registeredClientRepository);
-
-        // 使用redis存储、读取登录的认证信息
-        http.securityContext(context -> context.securityContextRepository(redisSecurityContextRepository));
-
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                // 开启OpenID Connect 1.0协议相关端点
-                .oidc(Customizer.withDefaults())
-                // 设置自定义用户确认授权页
-                .authorizationEndpoint(authorizationEndpoint -> {
-                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
-                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
-                            // 如果是分离页面则重定向，否则转发请求
-                            authorizationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
-                            if (absoluteUrl) {
-                                // 适配前后端分离的授权确认页面，成功/失败响应json
-                                authorizationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
-                                authorizationEndpoint.authorizationResponseHandler(new ConsentAuthorizationResponseHandler());
-                            }
-                        }
-                )
-                // 设置设备码用户验证url(自定义用户验证页)
-                .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
-                        deviceAuthorizationEndpoint.verificationUri(UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) ? CUSTOM_DEVICE_REDIRECT_URI : DEVICE_ACTIVATE_URI)
-                )
-                // 设置验证设备码用户确认页面
-                .deviceVerificationEndpoint(deviceVerificationEndpoint -> {
-                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
-                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
-                            // 如果是分离页面则重定向，否则转发请求
-                            deviceVerificationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
-                            if (absoluteUrl) {
-                                // 适配前后端分离的授权确认页面，失败响应json
-                                deviceVerificationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
-                            }
-                            // 如果授权码验证页面或者授权确认页面是前后端分离的
-                            if (UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) || absoluteUrl) {
-                                // 添加响应json处理
-                                deviceVerificationEndpoint.deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler());
-                            }
-                        }
-                )
-                .clientAuthentication(clientAuthentication ->
-                        // 客户端认证添加设备码的converter和provider
-                        clientAuthentication
-                                .authenticationConverter(deviceClientAuthenticationConverter)
-                                .authenticationProvider(deviceClientAuthenticationProvider)
-                );
-        http
-                // 当未登录时访问认证端点时重定向至login页面
-                .exceptionHandling((exceptions) -> exceptions
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                        )
-                )
-                // 处理使用access token访问用户信息端点和客户端注册端点
-                .oauth2ResourceServer((resourceServer) -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+        // 设置设备码配置
+        SecurityUtils.applyDeviceSecurity(http, registeredClientRepository, authorizationServerSettings);
 
         // 自定义短信认证登录转换器
         SmsCaptchaGrantAuthenticationConverter converter = new SmsCaptchaGrantAuthenticationConverter();
@@ -223,144 +116,6 @@ public class AuthorizationConfig {
         provider.setAuthenticationManager(authenticationManager);
 
         return build;
-    }
-
-    /**
-     * 配置认证相关的过滤器链(资源服务，客户端配置)
-     *
-     * @param http spring security核心配置类
-     * @return 过滤器链
-     * @throws Exception 抛出
-     */
-    @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-        // 添加跨域过滤器
-        http.addFilter(corsFilter());
-        // 禁用 csrf 与 cors
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(AbstractHttpConfigurer::disable);
-        http.authorizeHttpRequests((authorize) -> authorize
-                        // 放行静态资源
-                        .requestMatchers("/assets/**", "/webjars/**", "/login", "/getCaptcha", "/getSmsCaptcha", "/error", "/oauth2/consent/parameters").permitAll()
-                        .anyRequest().authenticated()
-                )
-                // 指定登录页面
-                .formLogin(formLogin -> {
-                            formLogin.loginPage("/login");
-                            if (UrlUtils.isAbsoluteUrl(LOGIN_URL)) {
-                                // 绝对路径代表是前后端分离，登录成功和失败改为写回json，不重定向了
-                                formLogin.successHandler(new LoginSuccessHandler());
-                                formLogin.failureHandler(new LoginFailureHandler());
-                            }
-                        }
-                );
-        // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
-        http.oauth2ResourceServer((resourceServer) -> resourceServer
-                .jwt(Customizer.withDefaults())
-                .accessDeniedHandler(SecurityUtils::exceptionHandler)
-                .authenticationEntryPoint(SecurityUtils::exceptionHandler)
-        );
-        // 兼容前后端分离与不分离配置
-        http
-                // 当未登录时访问认证端点时重定向至login页面
-                .exceptionHandling((exceptions) -> exceptions
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
-                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                        )
-                );
-        // 联合身份认证
-        http.oauth2Login(oauth2Login -> oauth2Login
-                .loginPage(LOGIN_URL)
-                .authorizationEndpoint(authorization -> authorization
-                        .authorizationRequestResolver(this.authorizationRequestResolver(clientRegistrationRepository))
-                )
-                .tokenEndpoint(token -> token
-                        .accessTokenResponseClient(this.accessTokenResponseClient())
-                )
-        );
-
-        // 使用redis存储、读取登录的认证信息
-        http.securityContext(context -> context.securityContextRepository(redisSecurityContextRepository));
-
-        return http.build();
-    }
-
-    /**
-     * AuthorizationRequest 自定义配置
-     *
-     * @param clientRegistrationRepository yml配置中客户端信息存储类
-     * @return OAuth2AuthorizationRequestResolver
-     */
-    private OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository) {
-        DefaultOAuth2AuthorizationRequestResolver authorizationRequestResolver =
-                new DefaultOAuth2AuthorizationRequestResolver(
-                        clientRegistrationRepository, OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
-
-        // 兼容微信登录授权申请
-        authorizationRequestResolver.setAuthorizationRequestCustomizer(new WechatAuthorizationRequestConsumer());
-
-        return authorizationRequestResolver;
-    }
-
-    /**
-     * 适配微信登录适配，添加自定义请求token入参处理
-     *
-     * @return OAuth2AccessTokenResponseClient accessToken响应信息处理
-     */
-    private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient tokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-        tokenResponseClient.setRequestEntityConverter(new WechatCodeGrantRequestEntityConverter());
-        // 自定义 RestTemplate，适配微信登录获取token
-        OAuth2AccessTokenResponseHttpMessageConverter messageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
-        List<MediaType> mediaTypes = new ArrayList<>(messageConverter.getSupportedMediaTypes());
-        // 微信获取token时响应的类型为“text/plain”，这里特殊处理一下
-        mediaTypes.add(MediaType.TEXT_PLAIN);
-        messageConverter.setAccessTokenResponseConverter(new WechatMapAccessTokenResponseConverter());
-        messageConverter.setSupportedMediaTypes(mediaTypes);
-
-        // 初始化RestTemplate
-        RestTemplate restTemplate = new RestTemplate(Arrays.asList(
-                new FormHttpMessageConverter(),
-                messageConverter));
-
-        restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
-        tokenResponseClient.setRestOperations(restTemplate);
-        return tokenResponseClient;
-    }
-
-    /**
-     * 跨域过滤器配置
-     *
-     * @return CorsFilter
-     */
-    @Bean
-    public CorsFilter corsFilter() {
-
-        // 初始化cors配置对象
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
-        configuration.addAllowedOrigin("http://127.0.0.1:5173");
-        configuration.addAllowedOrigin("http://192.168.1.102:5173");
-        configuration.addAllowedOrigin("https://vains-sofia.gitee.io");
-        // 设置跨域访问可以携带cookie
-        configuration.setAllowCredentials(true);
-        // 允许所有的请求方法 ==> GET POST PUT Delete
-        configuration.addAllowedMethod("*");
-        // 允许携带任何头信息
-        configuration.addAllowedHeader("*");
-
-        // 初始化cors配置源对象
-        UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
-
-        // 给配置源对象设置过滤的参数
-        // 参数一: 过滤的路径 == > 所有的路径都要求校验是否跨域
-        // 参数二: 配置类
-        configurationSource.registerCorsConfiguration("/**", configuration);
-
-        // 返回配置好的过滤器
-        return new CorsFilter(configurationSource);
     }
 
     /**
@@ -593,7 +348,7 @@ public class AuthorizationConfig {
                     设置token签发地址(http(s)://{ip}:{port}/context-path, http(s)://domain.com/context-path)
                     如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
                  */
-                .issuer("http://192.168.1.102:8080")
+                .issuer("http://192.168.119.1:8080")
                 .build();
     }
 

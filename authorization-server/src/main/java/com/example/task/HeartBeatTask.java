@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * 为back4app部署准备的定时任务，每25分钟执行一次
+ * 测试Http Interface，调用当前项目
  *
  * @author vains
  */

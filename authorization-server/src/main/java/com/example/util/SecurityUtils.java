@@ -1,27 +1,48 @@
 package com.example.util;
 
+import com.example.authorization.device.DeviceClientAuthenticationConverter;
+import com.example.authorization.device.DeviceClientAuthenticationProvider;
+import com.example.authorization.handler.ConsentAuthenticationFailureHandler;
+import com.example.authorization.handler.ConsentAuthorizationResponseHandler;
+import com.example.authorization.handler.DeviceAuthorizationResponseHandler;
+import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
+import com.example.support.RedisSecurityContextRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.util.UrlUtils;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.example.constant.SecurityConstants.*;
 
 /**
  * 认证鉴权工具
@@ -30,6 +51,10 @@ import java.util.Map;
  */
 @Slf4j
 public class SecurityUtils {
+
+    private static final String CUSTOM_DEVICE_REDIRECT_URI = "/activate/redirect";
+
+    private static final String CUSTOM_CONSENT_REDIRECT_URI = "/oauth2/consent/redirect";
 
     private SecurityUtils() {
         // 禁止实例化工具类
@@ -170,4 +195,121 @@ public class SecurityUtils {
         }
         return wwwAuthenticate.toString();
     }
+
+    /**
+     * 添加基础认证配置
+     * 开启认证服务OIDC配置，禁用 csrf 与 cors，配置认证存储方式，设置跳转至登录页面逻辑，添加资源服务配置
+     *
+     * @param http                           Security核心配置类
+     * @param redisSecurityContextRepository 基于redis存储认证信息
+     * @param corsFilter                     跨域处理过滤器
+     */
+    @SneakyThrows
+    public static void applyBasicSecurity(HttpSecurity http, RedisSecurityContextRepository redisSecurityContextRepository, CorsFilter corsFilter) {
+        // 添加跨域过滤器
+        http.addFilter(corsFilter);
+
+        OAuth2AuthorizationServerConfigurer httpConfigurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
+
+        if (httpConfigurer != null) {
+            // 认证服务配置
+            httpConfigurer
+                    // 开启OpenID Connect 1.0协议相关端点
+                    .oidc(Customizer.withDefaults());
+        } else {
+            // 资源服务配置
+            // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
+            http.oauth2ResourceServer((resourceServer) -> resourceServer
+                    .jwt(Customizer.withDefaults())
+                    .accessDeniedHandler(SecurityUtils::exceptionHandler)
+                    .authenticationEntryPoint(SecurityUtils::exceptionHandler)
+            );
+        }
+
+        // 禁用 csrf 与 cors
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(AbstractHttpConfigurer::disable);
+
+        // 同时支持redis与session的认证存储
+        HttpSessionSecurityContextRepository sessionSecurityContextRepository = new HttpSessionSecurityContextRepository();
+        DelegatingSecurityContextRepository delegatingSecurityContextRepository = new DelegatingSecurityContextRepository(redisSecurityContextRepository, sessionSecurityContextRepository);
+        // 使用redis存储、读取登录的认证信息
+        http.securityContext(context -> context.securityContextRepository(delegatingSecurityContextRepository));
+
+        http
+                // 当未登录时访问认证端点时重定向至login页面
+                .exceptionHandling((exceptions) -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginTargetAuthenticationEntryPoint(LOGIN_URL),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
+                )
+                // 处理使用access token访问用户信息端点和客户端注册端点
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(Customizer.withDefaults())
+                        .accessDeniedHandler(SecurityUtils::exceptionHandler)
+                        .authenticationEntryPoint(SecurityUtils::exceptionHandler));
+    }
+
+    /**
+     * 添加设备码相关自定义配置
+     * 设备码的授权确认页面、验证页面、自定义响应处理等
+     *
+     * @param http                        核心配置类
+     * @param registeredClientRepository  客户端Repository
+     * @param authorizationServerSettings 认证服务配置类
+     */
+    public static void applyDeviceSecurity(HttpSecurity http,
+                                           RegisteredClientRepository registeredClientRepository,
+                                           AuthorizationServerSettings authorizationServerSettings) {
+        // 新建设备码converter和provider
+        DeviceClientAuthenticationConverter deviceClientAuthenticationConverter =
+                new DeviceClientAuthenticationConverter(
+                        authorizationServerSettings.getDeviceAuthorizationEndpoint());
+        DeviceClientAuthenticationProvider deviceClientAuthenticationProvider =
+                new DeviceClientAuthenticationProvider(registeredClientRepository);
+
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+                // 设置自定义用户确认授权页
+                .authorizationEndpoint(authorizationEndpoint -> {
+                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
+                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
+                            // 如果是分离页面则重定向，否则转发请求
+                            authorizationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
+                            if (absoluteUrl) {
+                                // 适配前后端分离的授权确认页面，成功/失败响应json
+                                authorizationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
+                                authorizationEndpoint.authorizationResponseHandler(new ConsentAuthorizationResponseHandler());
+                            }
+                        }
+                )
+                // 设置设备码用户验证url(自定义用户验证页)
+                .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
+                        deviceAuthorizationEndpoint.verificationUri(UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) ? CUSTOM_DEVICE_REDIRECT_URI : DEVICE_ACTIVATE_URI)
+                )
+                // 设置验证设备码用户确认页面
+                .deviceVerificationEndpoint(deviceVerificationEndpoint -> {
+                            // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
+                            boolean absoluteUrl = UrlUtils.isAbsoluteUrl(CONSENT_PAGE_URI);
+                            // 如果是分离页面则重定向，否则转发请求
+                            deviceVerificationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : CONSENT_PAGE_URI);
+                            if (absoluteUrl) {
+                                // 适配前后端分离的授权确认页面，失败响应json
+                                deviceVerificationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler());
+                            }
+                            // 如果授权码验证页面或者授权确认页面是前后端分离的
+                            if (UrlUtils.isAbsoluteUrl(DEVICE_ACTIVATE_URI) || absoluteUrl) {
+                                // 添加响应json处理
+                                deviceVerificationEndpoint.deviceVerificationResponseHandler(new DeviceAuthorizationResponseHandler());
+                            }
+                        }
+                )
+                .clientAuthentication(clientAuthentication ->
+                        // 客户端认证添加设备码的converter和provider
+                        clientAuthentication
+                                .authenticationConverter(deviceClientAuthenticationConverter)
+                                .authenticationProvider(deviceClientAuthenticationProvider)
+                );
+    }
+
 }
