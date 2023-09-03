@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import axios from 'axios'
 import { createDiscreteApi } from 'naive-ui'
+import { getQueryString } from '@/util/GlobalUtils'
+import { getConsentParameters, submitApproveScope } from '@/api/Login'
 
 const { message } = createDiscreteApi(['message'])
 
@@ -11,13 +12,14 @@ const consentResult: Ref<any> = ref()
 const scopes = ref()
 // 已授权的scope
 const approvedScopes = ref()
+// 提交/拒绝按钮加载状态
+const loading = ref(false)
 
-axios({
-  method: 'GET',
-  url: `http://192.168.1.102:8080/oauth2/consent/parameters${window.location.search}`
-})
-  .then((r) => {
-    let result = r.data
+/**
+ * 初始化需要授权确认的客户端与scope
+ */
+getConsentParameters(window.location.search)
+  .then((result: any) => {
     if (result.success) {
       consentResult.value = result.data
       scopes.value = [...result.data.previouslyApprovedScopes, ...result.data.scopes]
@@ -26,7 +28,9 @@ axios({
       message.warning(result.message)
     }
   })
-  .catch((e) => message.error(e.message))
+  .catch((e: any) => {
+    message.warning(`获取客户端与scope信息失败：${e.message || e.statusText}`)
+  })
 
 /**
  * 提交授权确认
@@ -34,6 +38,11 @@ axios({
  * @param cancel true为取消
  */
 const submitApprove = (cancel: boolean) => {
+  if (!consentResult.value) {
+    message.warning(`初始化未完成，无法提交`)
+    return
+  }
+  loading.value = true
   const data = new FormData()
   if (!cancel) {
     // 如果不是取消添加scope
@@ -48,18 +57,14 @@ const submitApprove = (cancel: boolean) => {
   data.append('state', consentResult.value.state)
   data.append('client_id', consentResult.value.clientId)
   data.append('user_code', consentResult.value.userCode)
-  axios({
-    method: 'POST',
+
+  submitApproveScope(
     // @ts-ignore
-    data: new URLSearchParams(data),
-    headers: {
-      nonceId: getQueryString('nonceId'),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    url: `http://192.168.1.102:8080${consentResult.value.requestURI}`
-  })
-    .then((r) => {
-      let result = r.data
+    new URLSearchParams(data),
+    consentResult.value.requestURI,
+    getQueryString('nonceId') as string
+  )
+    .then((result: any) => {
       if (result.success) {
         window.location.href = result.data
       } else {
@@ -71,23 +76,10 @@ const submitApprove = (cancel: boolean) => {
         }
       }
     })
-    .catch((e) => message.error(e.message))
-}
-
-/**
- * 获取地址栏参数
- * @param name 地址栏参数的key
- */
-function getQueryString(name: string) {
-  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-
-  var r = window.location.search.substr(1).match(reg)
-
-  if (r != null) {
-    return unescape(r[2])
-  }
-
-  return null
+    .catch((e: any) => {
+      message.warning(`提交授权确认失败：${e.message || e.statusText}`)
+    })
+    .finally(() => (loading.value = false))
 }
 </script>
 
@@ -117,7 +109,7 @@ function getQueryString(name: string) {
     <n-scrollbar style="max-height: 230px">
       <n-checkbox-group v-model:value="approvedScopes">
         <n-list>
-          <n-list-item v-for="scope in scopes">
+          <n-list-item v-for="scope in scopes" :key="scope">
             <template #prefix>
               <n-checkbox :value="scope.scope"> </n-checkbox>
             </template>
@@ -127,11 +119,11 @@ function getQueryString(name: string) {
       </n-checkbox-group>
     </n-scrollbar>
     <br />
-    <n-button type="info" @click="submitApprove(false)" strong>
+    <n-button type="info" :loading="loading" @click="submitApprove(false)" strong>
       &nbsp;&nbsp;&nbsp;&nbsp;确&nbsp;&nbsp;&nbsp;&nbsp;定&nbsp;&nbsp;&nbsp;&nbsp;
     </n-button>
     &nbsp;&nbsp;&nbsp;&nbsp;
-    <n-button type="warning" @click="submitApprove(true)">
+    <n-button type="warning" :loading="loading" @click="submitApprove(true)">
       &nbsp;&nbsp;&nbsp;&nbsp;拒&nbsp;&nbsp;&nbsp;&nbsp;绝&nbsp;&nbsp;&nbsp;&nbsp;
     </n-button>
   </main>

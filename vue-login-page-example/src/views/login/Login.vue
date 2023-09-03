@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import { getQueryString } from '@/util/GlobalUtils'
 import { type CountdownProps, createDiscreteApi } from 'naive-ui'
+import { getImageCaptcha, loginSubmit, getSmsCaptchaByPhone } from '@/api/Login'
 
 const { message } = createDiscreteApi(['message'])
+
+// 登录按钮加载状态
+const loading = ref(false)
 
 // 定义登录提交的对象
 const loginModel = ref({
@@ -26,73 +30,46 @@ const counterActive = ref(false)
  * 获取图形验证码
  */
 const getCaptcha = () => {
-  axios({
-    method: 'GET',
-    url: 'http://192.168.1.102:8080/getCaptcha'
-  }).then((r) => {
-    let result = r.data
-    if (result.success) {
-      captchaCode = result.data.code
-      captchaImage.value = result.data.imageData
-      loginModel.value.captchaId = result.data.captchaId
-    } else {
-      message.warning(result.message)
-    }
-  })
+  getImageCaptcha()
+    .then((result: any) => {
+      if (result.success) {
+        captchaCode = result.data.code
+        captchaImage.value = result.data.imageData
+        loginModel.value.captchaId = result.data.captchaId
+      } else {
+        message.warning(result.message)
+      }
+    })
+    .catch((e: any) => {
+      message.warning(`获取图形验证码失败：${e.message}`)
+    })
 }
 
 /**
  * 提交登录表单
+ * @param type 登录类型，passwordLogin是密码模式，smsCaptcha短信登录
  */
-const submitLogin = () => {
-  loginModel.value.loginType = 'passwordLogin'
-  axios({
-    method: 'post',
-    url: 'http://192.168.1.102:8080/login',
-    headers: {
-      nonceId: loginModel.value.nonceId,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: loginModel.value
-  }).then((r) => {
-    let result = r.data
-    if (result.success) {
-      // message.info(`登录成功`)
-      let target = getQueryString('target')
-      if (target) {
-        window.location.href = target
+const submitLogin = (type: string) => {
+  loading.value = true
+  loginModel.value.loginType = type
+  loginSubmit(loginModel.value)
+    .then((result: any) => {
+      if (result.success) {
+        // message.info(`登录成功`)
+        let target = getQueryString('target')
+        if (target) {
+          window.location.href = target
+        }
+      } else {
+        message.warning(result.message)
       }
-    } else {
-      message.warning(result.message)
-    }
-  })
-}
-
-/**
- * 提交短信登录表单
- */
-const submitSmsLogin = () => {
-  loginModel.value.loginType = 'smsCaptcha'
-  axios({
-    method: 'post',
-    url: 'http://192.168.1.102:8080/login',
-    headers: {
-      nonceId: loginModel.value.nonceId,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: loginModel.value
-  }).then((r) => {
-    let result = r.data
-    if (result.success) {
-      message.info(`登录成功`)
-      let target = getQueryString('target')
-      if (target) {
-        window.location.href = target
-      }
-    } else {
-      message.warning(result.message)
-    }
-  })
+    })
+    .catch((e: any) => {
+      message.warning(`登录失败：${e.message}`)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 /**
@@ -111,18 +88,18 @@ const getSmsCaptcha = () => {
     message.warning('验证码错误.')
     return
   }
-  axios({
-    method: 'get',
-    url: `http://192.168.1.102:8080/getSmsCaptcha?phone=${loginModel.value.username}`
-  }).then((r) => {
-    let result = r.data
-    if (result.success) {
-      message.info(`获取短信验证码成功，固定为：${result.data}`)
-      counterActive.value = true
-    } else {
-      message.warning(result.message)
-    }
-  })
+  getSmsCaptchaByPhone({ phone: loginModel.value.username })
+    .then((result: any) => {
+      if (result.success) {
+        message.info(`获取短信验证码成功，固定为：${result.data}`)
+        counterActive.value = true
+      } else {
+        message.warning(result.message)
+      }
+    })
+    .catch((e: any) => {
+      message.warning(`获取短信验证码失败：${e.message}`)
+    })
 }
 
 /**
@@ -144,22 +121,6 @@ const onFinish = () => {
  */
 const renderCountdown: CountdownProps['render'] = ({ hours, minutes, seconds }) => {
   return `${seconds}`
-}
-
-/**
- * 获取地址栏参数
- * @param name 地址栏参数的key
- */
-function getQueryString(name: string) {
-  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-
-  var r = window.location.search.substr(1).match(reg)
-
-  if (r != null) {
-    return unescape(r[2])
-  }
-
-  return null
 }
 
 getCaptcha()
@@ -208,7 +169,15 @@ getCaptcha()
               </n-input-group>
             </n-form-item-row>
           </n-form>
-          <n-button type="info" @click="submitLogin" block strong> 登录 </n-button>
+          <n-button
+            type="info"
+            :loading="loading"
+            @click="submitLogin('passwordLogin')"
+            block
+            strong
+          >
+            登录
+          </n-button>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="短信登录">
           <n-form>
@@ -251,14 +220,33 @@ getCaptcha()
               </n-input-group>
             </n-form-item-row>
           </n-form>
-          <n-button type="info" @click="submitSmsLogin" block strong> 登录 </n-button>
+          <n-button type="info" :loading="loading" @click="submitLogin('smsCaptcha')" block strong>
+            登录
+          </n-button>
         </n-tab-pane>
       </n-tabs>
+      <n-divider> 其它登录方式 </n-divider>
+      <div class="other_login_icon">
+        <IconGitee :size="32" class="icon_item" />
+        <img width="36" height="36" src="../../assets/GitHub-Mark.png" class="icon_item" />
+        <img width="28" height="28" src="../../assets/wechat_login.png" class="icon_item" />
+      </div>
     </n-card>
   </main>
 </template>
 
 <style scoped>
+.other_login_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0 10px;
+  position: relative;
+  margin-top: -5px;
+}
+.icon_item {
+  cursor: pointer;
+}
 header {
   line-height: 1.5;
 }

@@ -92,8 +92,6 @@ public class AuthorizationConfig {
         // 自定义短信认证登录认证提供
         SmsCaptchaGrantAuthenticationProvider provider = new SmsCaptchaGrantAuthenticationProvider();
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                // 让认证服务器元数据中有自定义的认证方式
-                .authorizationServerMetadataEndpoint(metadata -> metadata.authorizationServerMetadataCustomizer(customizer -> customizer.grantType(SecurityConstants.GRANT_TYPE_SMS_CODE)))
                 // 添加自定义grant_type——短信认证登录
                 .tokenEndpoint(tokenEndpoint -> tokenEndpoint
                         .accessTokenRequestConverter(converter)

@@ -1,61 +1,48 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
 import { createDiscreteApi } from 'naive-ui'
+import { deviceVerification } from '@/api/Login'
+import { getQueryString } from '@/util/GlobalUtils'
 
 const { message } = createDiscreteApi(['message'])
+
+// 提交按钮加载状态
+const loading = ref(false)
 
 const userCode = ref({
   userCode: getQueryString('userCode')
 })
 
 /**
- * 提交授权确认
- *
- * @param cancel true为取消
+ * 验证设备码
  */
 const submit = () => {
+  if (!userCode.value.userCode) {
+    message.warning(`请输入设备码`)
+    return
+  }
+  loading.value = true
   const data = {
     user_code: userCode.value.userCode
   }
-  axios({
-    method: 'POST',
-    data,
-    headers: {
-      nonceId: getQueryString('nonceId'),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    url: `http://192.168.1.102:8080/oauth2/device_verification`
-  })
-    .then((r) => {
-      let result = r.data
+
+  deviceVerification(data, getQueryString('nonceId') as string)
+    .then((result: any) => {
       if (result.success) {
         window.location.href = result.data
       } else {
         message.warning(result.message)
       }
     })
-    .catch((e) => message.error(e.message))
+    .catch((e: any) => {
+      message.warning(`提交设备码失败：${e.message || e.statusText}`)
+    })
+    .finally(() => (loading.value = false))
 }
 
+// 如果地址栏有参数直接提交
 if (userCode.value.userCode) {
   submit()
-}
-
-/**
- * 获取地址栏参数
- * @param name 地址栏参数的key
- */
-function getQueryString(name: string) {
-  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-
-  var r = window.location.search.substr(1).match(reg)
-
-  if (r != null) {
-    return unescape(r[2])
-  }
-
-  return null
 }
 </script>
 
@@ -75,13 +62,13 @@ function getQueryString(name: string) {
       <n-form-item-row label="Activation Code">
         <n-input
           v-model:value="userCode.userCode"
-          placeholder="User Code"
+          placeholder="User Code，格式：XXXX-XXXX，错误的格式后端会报错"
           maxlength="9"
           show-count
           clearable
         />
       </n-form-item-row>
-      <n-button type="info" @click="submit" block strong> 登录 </n-button>
+      <n-button type="info" :loading="loading" @click="submit" block strong> 提交 </n-button>
     </n-card>
   </main>
 </template>

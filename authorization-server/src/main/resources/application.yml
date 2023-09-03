@@ -87,14 +87,14 @@ custom:
   # 自定义认证配置
   security:
     # 登录页面路径
-    login-url: /login
+    login-url: http://192.168.119.1:5173/login
     # 授权确认页面路径
-    consent-page-uri: /oauth2/consent
+    consent-page-uri: http://192.168.119.1:5173/consent
     # 设备码验证页面
-    device-activate-uri: /activate
+    device-activate-uri: http://192.168.119.1:5173/activate
     # 设备码验证成功页面
-    device-activated-uri: /activated
+    device-activated-uri: http://192.168.119.1:5173/activated
     # 不需要认证的地址
-    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03
+    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico
     # 当前认证服务访问的路径
     issuer-url: http://192.168.119.1:8080
