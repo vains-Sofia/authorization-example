@@ -123,6 +123,14 @@ const renderCountdown: CountdownProps['render'] = ({ hours, minutes, seconds }) 
   return `${seconds}`
 }
 
+/**
+ * 根据类型发起OAuth2授权申请
+ * @param type 三方OAuth2登录提供商类型
+ */
+const thirdLogin = (type: string) => {
+  window.location.href = `${import.meta.env.VITE_OAUTH_ISSUER}/oauth2/authorization/${type}`;
+}
+
 getCaptcha()
 </script>
 
@@ -227,9 +235,9 @@ getCaptcha()
       </n-tabs>
       <n-divider> 其它登录方式 </n-divider>
       <div class="other_login_icon">
-        <IconGitee :size="32" class="icon_item" />
-        <img width="36" height="36" src="../../assets/GitHub-Mark.png" class="icon_item" />
-        <img width="28" height="28" src="../../assets/wechat_login.png" class="icon_item" />
+        <IconGitee :size="32" @click="thirdLogin('gitee')" class="icon_item" />
+        <img width="36" height="36" @click="thirdLogin('github')" src="../../assets/GitHub-Mark.png" class="icon_item" />
+        <img width="28" height="28" @click="thirdLogin('wechat')" src="../../assets/wechat_login.png" class="icon_item" />
       </div>
     </n-card>
   </main>
