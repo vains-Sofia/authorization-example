@@ -30,6 +30,7 @@ declare module 'vue' {
     NListItem: typeof import('naive-ui')['NListItem']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     NSpace: typeof import('naive-ui')['NSpace']
+    NTable: typeof import('naive-ui')['NTable']
     NTabPane: typeof import('naive-ui')['NTabPane']
     NTabs: typeof import('naive-ui')['NTabs']
     NThing: typeof import('naive-ui')['NThing']
