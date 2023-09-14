@@ -7,32 +7,24 @@
       <n-card title="设备码验证页面" @click="pathRoute('/activate')" hoverable> /activate</n-card>
       <n-card title="验证成功页面" @click="pathRoute('/activated')" hoverable> /activated </n-card>
       <br />
-      <n-card title="授权码模式" @click="todo" hoverable> 发起授权码模式的授权申请 </n-card>
-      <n-card title="PKCE模式" @click="pathRoute('/oauth2Redirect')" hoverable> 发起PKCE模式的授权申请 </n-card>
-      <n-card title="Token展示" hoverable v-if="accessToken"> 
+      <n-card title="授权码模式" @click="pathRoute('/OAuth2Redirect')" hoverable>
+        发起授权码模式的授权申请
+      </n-card>
+      <n-card title="PKCE模式" @click="pathRoute('/PkceRedirect')" hoverable>
+        发起PKCE模式的授权申请
+      </n-card>
+      <n-card title="Token展示" hoverable v-if="accessToken">
         <n-table :single-line="false">
           <thead>
             <tr>
-              <th style="width: 105px;">Key</th>
+              <th style="width: 105px">Key</th>
               <th>Value</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Scope</td>
-              <td>{{ accessToken.scope }}</td>
-            </tr>
-            <tr>
-              <td>TokenType</td>
-              <td>{{ accessToken.token_type }}</td>
-            </tr>
-            <tr>
-              <td>ExpiresIn</td>
-              <td>{{ accessToken.expires_in }}</td>
-            </tr>
-            <tr>
-              <td>AccessToken</td>
-              <td>{{ accessToken.access_token }}</td>
+            <tr v-for="(v, k) in accessToken" :key="k">
+              <td>{{ k }}</td>
+              <td>{{ v }}</td>
             </tr>
           </tbody>
         </n-table>
@@ -57,9 +49,9 @@ const pathRoute = (path: string) => {
   router.push({ path })
 }
 
-const todo = () => {
-  message.info('待开发')
-}
+// const todo = () => {
+//   message.info('待开发')
+// }
 </script>
 
 <style scoped>

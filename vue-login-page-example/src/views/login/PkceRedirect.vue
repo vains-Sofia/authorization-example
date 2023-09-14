@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import router from '../../router'
 import { getToken } from '@/api/Login'
-import { createDiscreteApi } from 'naive-ui'
-import { generateCodeVerifier } from '@/util/pkce'
 import { getQueryString } from '@/util/GlobalUtils'
+import { createDiscreteApi } from 'naive-ui'
+import { generateCodeVerifier, generateCodeChallenge } from '@/util/pkce'
 
 const { message } = createDiscreteApi(['message'])
 
+// 生成CodeVerifier
+let codeVerifier: string = generateCodeVerifier()
+// codeChallenge
+let codeChallenge: string = generateCodeChallenge(codeVerifier)
 // 生成state
 let state: string = generateCodeVerifier()
 
@@ -22,16 +26,17 @@ if (code) {
     message.warning('state校验失败.')
   } else {
     // 从缓存中获取 codeVerifier
+    const code_verifier = localStorage.getItem('codeVerifier')
     getToken({
       grant_type: 'authorization_code',
-      client_id: import.meta.env.VITE_OAUTH_CLIENT_ID,
-      client_secret: import.meta.env.VITE_OAUTH_CLIENT_SECRET,
-      redirect_uri: import.meta.env.VITE_OAUTH_REDIRECT_URI,
+      client_id: import.meta.env.VITE_PKCE_CLIENT_ID,
+      redirect_uri: import.meta.env.VITE_PKCE_REDIRECT_URI,
       code,
+      code_verifier,
       state
     })
       .then((res: any) => {
-        localStorage.setItem('accessToken', JSON.stringify(res, null, 2))
+        localStorage.setItem('accessToken', JSON.stringify(res))
         router.push({ path: '/' })
       })
       .catch((e) => {
@@ -41,11 +46,15 @@ if (code) {
 } else {
   // 缓存state
   localStorage.setItem('state', state)
-  window.location.href = `${import.meta.env.VITE_OAUTH_ISSUER}/oauth2/authorize?client_id=${
-    import.meta.env.VITE_OAUTH_CLIENT_ID
-  }&response_type=code&scope=openid%20profile%20message.read%20message.write&redirect_uri=${
-    import.meta.env.VITE_OAUTH_REDIRECT_URI
-  }&state=${state}`
+  // 缓存codeVerifier
+  localStorage.setItem('codeVerifier', codeVerifier)
+  window.location.href = `${
+    import.meta.env.VITE_OAUTH_ISSUER
+  }/oauth2/authorize?response_type=code&client_id=${
+    import.meta.env.VITE_PKCE_CLIENT_ID
+  }&redirect_uri=${encodeURIComponent(
+    import.meta.env.VITE_PKCE_REDIRECT_URI
+  )}&scope=message.write%20message.read&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${state}`
 }
 </script>
 
