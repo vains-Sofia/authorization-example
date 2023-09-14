@@ -35,9 +35,9 @@
 
 <script setup lang="ts">
 import router from '../../router'
-import { createDiscreteApi } from 'naive-ui'
+// import { createDiscreteApi } from 'naive-ui'
 
-const { message } = createDiscreteApi(['message'])
+// const { message } = createDiscreteApi(['message'])
 // 从缓存中获取token
 const accessToken = JSON.parse(String(localStorage.getItem('accessToken')))
 
