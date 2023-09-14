@@ -23,7 +23,7 @@ export class Request {
             (config: InternalAxiosRequestConfig) => {
                 // 一般会请求拦截里面加token，用于后端的验证
                 const token: any = localStorage.getItem("accessToken")
-                if (token) {
+                if (token && config.url !== '/oauth2/token') {
                     config.headers!.Authorization = `${token.token_type} ${token.access_token}`;
                 }
 

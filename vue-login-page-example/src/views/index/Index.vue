@@ -17,7 +17,7 @@
         <n-table :single-line="false">
           <thead>
             <tr>
-              <th style="width: 105px">Key</th>
+              <th style="width: 110px">Key</th>
               <th>Value</th>
             </tr>
           </thead>
