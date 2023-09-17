@@ -31,7 +31,7 @@ if (code) {
       state
     })
       .then((res: any) => {
-        localStorage.setItem('accessToken', JSON.stringify(res, null, 2))
+        localStorage.setItem('accessToken', JSON.stringify(res))
         router.push({ path: '/' })
       })
       .catch((e) => {
