@@ -4,9 +4,12 @@
 
 本项目如标题所说，是Spring oauth2 authorization server的一个整合项目。
 
-## [项目Wiki地址(持续更新)](https://gitee.com/vains-Sofia/authorization-example/wikis/pages)
+## 项目Wiki地址(持续更新)
 
-## [登录流程演示地址](https://vains-sofia.gitee.io)
+[Wiki](https://gitee.com/vains-Sofia/authorization-example/wikis/pages)
+
+## 登录流程演示地址
+[演示地址](https://vains-sofia.gitee.io)
 
 网速较慢，各位体谅一下
 
