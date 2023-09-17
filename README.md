@@ -75,6 +75,8 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://juejin.cn/post/7261098261142208568)**<br>
 **[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://juejin.cn/post/7262317630307205176)**<br>
 **[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://juejin.cn/spost/7271496874942890024)**<br>
+**[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://juejin.cn/post/7279052777888890921)**<br>
+**[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://juejin.cn/post/7279265985912225828)**<br>
 
 ### CSDN
 
@@ -94,6 +96,8 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://blog.csdn.net/weixin_43356507/article/details/131998050)**<br>
 **[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://blog.csdn.net/weixin_43356507/article/details/132052355)**<br>
 **[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132517747)**<br>
+**[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949746)**<br>
+**[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949801)**<br>
 
 ## 赞赏
 
