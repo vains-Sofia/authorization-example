@@ -10,6 +10,16 @@ public class SecurityConstants {
     /**
      * 微信登录相关参数——openid：用户唯一id
      */
+    public static final String OAUTH_LOGIN_TYPE = "loginType";
+
+    /**
+     * 微信登录相关参数——openid：用户唯一id
+     */
+    public static final String TOKEN_UNIQUE_ID = "uniqueId";
+
+    /**
+     * 微信登录相关参数——openid：用户唯一id
+     */
     public static final String WECHAT_PARAMETER_OPENID = "openid";
 
     /**

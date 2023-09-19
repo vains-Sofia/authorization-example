@@ -1,6 +1,6 @@
 package com.example.strategy;
 
-import com.example.entity.Oauth2ThirdAccount;
+import com.example.model.security.BasicOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
@@ -11,11 +11,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 public interface Oauth2UserConverterStrategy {
 
     /**
-     * 将oauth2登录的认证信息转为 {@link Oauth2ThirdAccount}
+     * 将oauth2登录的认证信息转为 {@link BasicOAuth2User}
      *
      * @param oAuth2User oauth2登录获取的用户信息
      * @return 项目中的用户信息
      */
-    Oauth2ThirdAccount convert(OAuth2User oAuth2User);
+    BasicOAuth2User convert(OAuth2User oAuth2User);
 
 }

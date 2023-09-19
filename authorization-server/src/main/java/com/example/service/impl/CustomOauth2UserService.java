@@ -2,8 +2,8 @@ package com.example.service.impl;
 
 import com.example.authorization.wechat.WechatUserRequestEntityConverter;
 import com.example.authorization.wechat.WechatUserResponseConverter;
-import com.example.entity.Oauth2ThirdAccount;
 import com.example.exception.InvalidCaptchaException;
+import com.example.model.security.BasicOAuth2User;
 import com.example.service.IOauth2ThirdAccountService;
 import com.example.strategy.context.Oauth2UserConverterContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorH
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -66,17 +64,14 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         try {
             OAuth2User oAuth2User = super.loadUser(userRequest);
+
             // 转为项目中的三方用户信息
-            Oauth2ThirdAccount oauth2ThirdAccount = userConverterContext.convert(userRequest, oAuth2User);
+            BasicOAuth2User basicOauth2User = userConverterContext.convert(userRequest, oAuth2User);
+
             // 检查用户信息
-            thirdAccountService.checkAndSaveUser(oauth2ThirdAccount);
-            // 将loginType设置至attributes中
-            LinkedHashMap<String, Object> attributes = new LinkedHashMap<>(oAuth2User.getAttributes());
-            // 将RegistrationId当做登录类型
-            attributes.put("loginType", userRequest.getClientRegistration().getRegistrationId());
-            String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
-                    .getUserNameAttributeName();
-            return new DefaultOAuth2User(oAuth2User.getAuthorities(), attributes, userNameAttributeName);
+            thirdAccountService.checkAndSaveUser(basicOauth2User);
+
+            return basicOauth2User;
         } catch (Exception e) {
             // 获取当前request
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

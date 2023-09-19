@@ -1,19 +1,16 @@
 package com.example.service.impl;
 
-import com.example.entity.Oauth2ThirdAccount;
+import com.example.model.security.BasicOAuth2User;
+import com.example.model.security.BasicOidcUser;
 import com.example.service.IOauth2ThirdAccountService;
 import com.example.strategy.context.Oauth2UserConverterContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.LinkedHashMap;
 
 /**
  * 自定义三方oidc登录用户信息服务
@@ -33,22 +30,14 @@ public class CustomOidcUserService extends OidcUserService {
         // 获取三方用户信息
         OidcUser oidcUser = super.loadUser(userRequest);
         // 转为项目中的三方用户信息
-        Oauth2ThirdAccount oauth2ThirdAccount = userConverterContext.convert(userRequest, oidcUser);
+        BasicOAuth2User basicOauth2User = userConverterContext.convert(userRequest, oidcUser);
         // 检查用户信息
-        thirdAccountService.checkAndSaveUser(oauth2ThirdAccount);
-        OidcIdToken oidcIdToken = oidcUser.getIdToken();
-        // 将loginType设置至attributes中
-        LinkedHashMap<String, Object> attributes = new LinkedHashMap<>(oidcIdToken.getClaims());
-        // 将RegistrationId当做登录类型
-        attributes.put("loginType", userRequest.getClientRegistration().getRegistrationId());
-        // 重新生成一个idToken
-        OidcIdToken idToken = new OidcIdToken(oidcIdToken.getTokenValue(), oidcIdToken.getIssuedAt(), oidcIdToken.getExpiresAt(), attributes);
-        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
-                .getUserNameAttributeName();
+        thirdAccountService.checkAndSaveUser(basicOauth2User);
+
         // 重新生成oidcUser
-        if (StringUtils.hasText(userNameAttributeName)) {
-            return new DefaultOidcUser(oidcUser.getAuthorities(), idToken, oidcUser.getUserInfo(), userNameAttributeName);
+        if (StringUtils.hasText(basicOauth2User.getNameAttributeKey())) {
+            return new BasicOidcUser(oidcUser, oidcUser.getIdToken(), oidcUser.getUserInfo(), basicOauth2User.getNameAttributeKey());
         }
-        return new DefaultOidcUser(oidcUser.getAuthorities(), idToken, oidcUser.getUserInfo());
+        return new BasicOidcUser(oidcUser, oidcUser.getIdToken(), oidcUser.getUserInfo());
     }
 }

@@ -1,6 +1,6 @@
 package com.example.strategy.impl;
 
-import com.example.entity.Oauth2ThirdAccount;
+import com.example.model.security.BasicOAuth2User;
 import com.example.strategy.Oauth2UserConverterStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -22,14 +22,14 @@ public class GithubUserConverter implements Oauth2UserConverterStrategy {
     protected static final String LOGIN_TYPE = THIRD_LOGIN_GITHUB;
 
     @Override
-    public Oauth2ThirdAccount convert(OAuth2User oAuth2User) {
+    public BasicOAuth2User convert(OAuth2User oAuth2User) {
         // github与gitee目前所取字段一致，直接调用gitee的解析
-        Oauth2ThirdAccount thirdAccount = userConverter.convert(oAuth2User);
+        BasicOAuth2User basicOauth2User = userConverter.convert(oAuth2User);
         // 提取location
         Object location = oAuth2User.getAttributes().get("location");
-        thirdAccount.setLocation(String.valueOf(location));
+        basicOauth2User.setLocation(location + "");
         // 设置登录类型
-        thirdAccount.setType(LOGIN_TYPE);
-        return thirdAccount;
+        basicOauth2User.setType(LOGIN_TYPE);
+        return basicOauth2User;
     }
 }
