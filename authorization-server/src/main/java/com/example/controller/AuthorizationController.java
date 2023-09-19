@@ -187,6 +187,27 @@ public class AuthorizationController {
         return "device-activated";
     }
 
+    @ResponseBody
+    @GetMapping(value = "/")
+    public String index() {
+        return """
+            <h3>根目录什么都没有，试着发起授权申请流程吧</h3>
+            简单说下为什么会跳转到根目录，大概有以下几种情况：<br>
+            <ol>
+                <li>最一开始直接访问认证服务的跟目录，被项目重定向到登录页面(前后端不分离)，在登录页面登录成功后请求会到这里</li>
+                <li>直接访问登录页面(前后端不分离)，在登录页面登录成功后请求会到这里</li>
+                <li>前后端分离的情况下直接访问前端的登录页面，使用三方登录成功后会被重定向到这里</li>
+            </ol>
+            Security有一个机制，当请求被重定向到登录页面时会存储这个请求，在登录成功后从缓存中获取这个请求并重定向到该请求，从缓存中获取请求失败后会默认重定向到根目录，
+            所以上边第2中情况会重定向到根目录；<br>
+            再来说一下第3种情况，因为认证服务集成了联合身份认证，三方应用的授权申请都由认证服务发起，包括回调地址也由认证服务处理，
+            所以三方登录成功后它的回调地址是认证服务，认证服务通过授权码获取到认证信息(三方应用登录的accessToken和用户信息)时会有一个跳转，跳转的逻辑和上边的一样，都是
+            从缓存中获取跳转登录之前存储的地址，如果是走认证服务的授权申请流程就是(/oauth2/authorize)接口，但是如果直接访问前端登录页面在通过三方登录就获取不到缓存中的
+            地址，所以默认就跳转到根目录了。<br>
+            如果还有别的情况也可以继续补充。
+        """;
+    }
+
     @GetMapping("/login")
     public String login(Model model, HttpSession session) {
         Object attribute = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
