@@ -226,14 +226,6 @@ public class SecurityUtils {
                     )
                     // 让认证服务器元数据中有自定义的认证方式
                     .authorizationServerMetadataEndpoint(metadata -> metadata.authorizationServerMetadataCustomizer(customizer -> customizer.grantType(SecurityConstants.GRANT_TYPE_SMS_CODE)));
-        } else {
-            // 资源服务配置
-            // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
-            http.oauth2ResourceServer((resourceServer) -> resourceServer
-                    .jwt(Customizer.withDefaults())
-                    .accessDeniedHandler(SecurityUtils::exceptionHandler)
-                    .authenticationEntryPoint(SecurityUtils::exceptionHandler)
-            );
         }
 
         // 禁用 csrf 与 cors
@@ -251,6 +243,7 @@ public class SecurityUtils {
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
+                // 添加BearerTokenAuthenticationFilter，将认证服务当做一个资源服务，解析请求头中的token
                 // 处理使用access token访问用户信息端点和客户端注册端点
                 .oauth2ResourceServer((resourceServer) -> resourceServer
                         .jwt(Customizer.withDefaults())

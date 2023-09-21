@@ -34,6 +34,9 @@ import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_
 @RequiredArgsConstructor
 public class ConsentAuthorizationResponseHandler implements AuthenticationSuccessHandler {
 
+    /**
+     * 授权确认页面
+     */
     private final String consentPageUri;
 
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();

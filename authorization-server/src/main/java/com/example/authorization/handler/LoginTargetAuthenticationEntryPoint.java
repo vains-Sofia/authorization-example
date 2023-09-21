@@ -29,6 +29,9 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
+    /**
+     * 设备码认证页面
+     */
     private final String deviceActivateUri;
 
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();

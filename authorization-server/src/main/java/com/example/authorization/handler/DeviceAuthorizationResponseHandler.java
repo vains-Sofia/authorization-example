@@ -20,6 +20,9 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class DeviceAuthorizationResponseHandler implements AuthenticationSuccessHandler {
 
+    /**
+     * 设备码验证成功后跳转地址
+     */
     private final String deviceActivatedUri;
 
     @Override
