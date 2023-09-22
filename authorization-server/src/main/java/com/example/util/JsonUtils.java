@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * <p>
- *  JSON与对象互转帮助类
+ * JSON与对象互转帮助类
  * </p>
  *
  * @author vains
@@ -33,7 +33,7 @@ public class JsonUtils {
     /**
      * 设置为public是为了提供给redis的序列化器
      */
-    public final static ObjectMapper MAPPER = new ObjectMapper();
+    private final static ObjectMapper MAPPER = new ObjectMapper();
 
     static {
         // 对象的所有字段全部列入，还是其他的选项，可以忽略null等
@@ -53,9 +53,10 @@ public class JsonUtils {
 
     /**
      * json字符串转为对象
-     * @param json json
+     *
+     * @param json  json
      * @param clazz T类的class文件
-     * @param <T> 泛型, 代表返回参数的类型
+     * @param <T>   泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
     public static <T> T jsonCovertToObject(String json, Class<T> clazz) {
@@ -72,9 +73,10 @@ public class JsonUtils {
 
     /**
      * json字符串转为对象
+     *
      * @param json json
      * @param type 对象在Jackson中的类型
-     * @param <T> 泛型, 代表返回参数的类型
+     * @param <T>  泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
     public static <T> T jsonCovertToObject(String json, TypeReference<T> type) {
@@ -91,9 +93,10 @@ public class JsonUtils {
 
     /**
      * 将流中的数据转为java对象
+     *
      * @param inputStream 输入流
-     * @param clazz 类的class
-     * @param <T> 泛型, 代表返回参数的类型
+     * @param clazz       类的class
+     * @param <T>         泛型, 代表返回参数的类型
      * @return 返回对象 如果参数任意一个为 null则返回null
      */
     public static <T> T covertStreamToObject(InputStream inputStream, Class<T> clazz) {
@@ -110,13 +113,14 @@ public class JsonUtils {
 
     /**
      * json字符串转为复杂类型List
-     * @param json json
+     *
+     * @param json            json
      * @param collectionClazz 集合的class
-     * @param elementsClazz 集合中泛型的class
-     * @param <T> 泛型, 代表返回参数的类型
+     * @param elementsClazz   集合中泛型的class
+     * @param <T>             泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
-    public static <T> T jsonCovertToObject(String json, Class<?> collectionClazz, Class<?> ... elementsClazz) {
+    public static <T> T jsonCovertToObject(String json, Class<?> collectionClazz, Class<?>... elementsClazz) {
         if (json == null || collectionClazz == null || elementsClazz == null) {
             return null;
         }
@@ -131,6 +135,7 @@ public class JsonUtils {
 
     /**
      * 对象转为json字符串
+     *
      * @param o 将要转化的对象
      * @return 返回json字符串
      */
@@ -148,15 +153,16 @@ public class JsonUtils {
 
     /**
      * 将对象转为另一个对象
-     *      切记,两个对象结构要一致
-     *      多用于Object转为具体的对象
-     * @param o 将要转化的对象
+     * 切记,两个对象结构要一致
+     * 多用于Object转为具体的对象
+     *
+     * @param o               将要转化的对象
      * @param collectionClazz 集合的class
-     * @param elementsClazz 集合中泛型的class
-     * @param <T> 泛型, 代表返回参数的类型
+     * @param elementsClazz   集合中泛型的class
+     * @param <T>             泛型, 代表返回参数的类型
      * @return 返回T的实例
      */
-    public static  <T> T objectCovertToObject(Object o, Class<?> collectionClazz, Class<?>... elementsClazz) {
+    public static <T> T objectCovertToObject(Object o, Class<?> collectionClazz, Class<?>... elementsClazz) {
         String json = objectCovertToJson(o);
         return jsonCovertToObject(json, collectionClazz, elementsClazz);
     }

@@ -1,6 +1,12 @@
 package com.example.config;
 
-import com.example.util.JsonUtils;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -14,7 +20,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author vains
  */
 @Configuration
+@RequiredArgsConstructor
 public class RedisConfig {
+
+    private final ObjectMapper objectMapper;
 
     /**
      * 默认情况下使用
@@ -26,12 +35,29 @@ public class RedisConfig {
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         // 字符串序列化器
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+        // 序列化所有字段
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+
+        // 此项必须配置，否则如果序列化的对象里边还有对象，会报如下错误：
+        //     java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to XXX
+        objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY);
+
+        // 添加java8序列化支持和新版时间对象序列化支持
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new JavaTimeModule());
+
         // 存入redis时序列化值的序列化器
         Jackson2JsonRedisSerializer<Object> valueSerializer =
-                new Jackson2JsonRedisSerializer<>(JsonUtils.MAPPER, Object.class);
+                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
 
+        // 设置值序列化
+        redisTemplate.setValueSerializer(valueSerializer);
         // 设置hash格式数据值的序列化器
         redisTemplate.setHashValueSerializer(valueSerializer);
         // 默认的Key序列化器为：JdkSerializationRedisSerializer
