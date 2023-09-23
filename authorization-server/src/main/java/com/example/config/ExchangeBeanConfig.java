@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.exchange.GiteeExchange;
 import com.example.exchange.ProjectExchange;
 import com.example.property.CustomSecurityProperties;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @RequiredArgsConstructor
 public class ExchangeBeanConfig {
 
+    private final String GITEE_URL = "https://gitee.com";
+
     private final CustomSecurityProperties securityProperties;
 
     /**
@@ -32,6 +35,20 @@ public class ExchangeBeanConfig {
                 HttpServiceProxyFactory.builder(WebClientAdapter.forClient(webClient))
                         .build();
         return httpServiceProxyFactory.createClient(ProjectExchange.class);
+    }
+
+    /**
+     * 注入Gitee Exchange
+     *
+     * @return GiteeExchange
+     */
+    @Bean
+    public GiteeExchange giteeExchange() {
+        WebClient webClient = WebClient.builder().baseUrl(GITEE_URL).build();
+        HttpServiceProxyFactory httpServiceProxyFactory =
+                HttpServiceProxyFactory.builder(WebClientAdapter.forClient(webClient))
+                        .build();
+        return httpServiceProxyFactory.createClient(GiteeExchange.class);
     }
 
 }

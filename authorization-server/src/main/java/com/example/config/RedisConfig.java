@@ -13,6 +13,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.security.jackson2.CoreJackson2Module;
 
 /**
  * Redis的key序列化配置类
@@ -23,7 +25,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    private final ObjectMapper objectMapper;
+    private final Jackson2ObjectMapperBuilder builder;
 
     /**
      * 默认情况下使用
@@ -35,6 +37,8 @@ public class RedisConfig {
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         // 字符串序列化器
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+
+        ObjectMapper objectMapper = builder.createXmlMapper(false).build();
 
         // 序列化所有字段
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -49,6 +53,7 @@ public class RedisConfig {
         // 添加java8序列化支持和新版时间对象序列化支持
         objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new CoreJackson2Module());
 
         // 存入redis时序列化值的序列化器
         Jackson2JsonRedisSerializer<Object> valueSerializer =
