@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("/user")
     public Oauth2UserinfoResult user() {
-        int a = 1 / 0;
+
         return basicUserService.getLoginUserInfo();
     }
 

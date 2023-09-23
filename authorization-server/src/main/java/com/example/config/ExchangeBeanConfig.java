@@ -19,8 +19,6 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @RequiredArgsConstructor
 public class ExchangeBeanConfig {
 
-    private final String GITEE_URL = "https://gitee.com";
-
     private final CustomSecurityProperties securityProperties;
 
     /**
@@ -44,7 +42,8 @@ public class ExchangeBeanConfig {
      */
     @Bean
     public GiteeExchange giteeExchange() {
-        WebClient webClient = WebClient.builder().baseUrl(GITEE_URL).build();
+        String giteeUrl = "https://gitee.com";
+        WebClient webClient = WebClient.builder().baseUrl(giteeUrl).build();
         HttpServiceProxyFactory httpServiceProxyFactory =
                 HttpServiceProxyFactory.builder(WebClientAdapter.forClient(webClient))
                         .build();
