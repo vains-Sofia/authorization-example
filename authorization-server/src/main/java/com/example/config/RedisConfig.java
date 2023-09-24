@@ -36,6 +36,7 @@ public class RedisConfig {
         // 字符串序列化器
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
 
+        // 创建ObjectMapper并添加默认配置
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
 
         // 序列化所有字段
@@ -48,7 +49,7 @@ public class RedisConfig {
                 ObjectMapper.DefaultTyping.NON_FINAL,
                 JsonTypeInfo.As.PROPERTY);
 
-        // 添加java8序列化支持和新版时间对象序列化支持
+        // 添加Security提供的Jackson Mixin
         objectMapper.registerModule(new CoreJackson2Module());
 
         // 存入redis时序列化值的序列化器
