@@ -1,7 +1,7 @@
 package com.example.support;
 
 import com.example.util.JsonUtils;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,17 +21,12 @@ import java.util.concurrent.TimeUnit;
  * @author vains
  */
 @Component
+@RequiredArgsConstructor
 public class RedisOperator<V> {
 
-    /**
-     * 这里使用 @Resource 注解是因为在配置文件中注入ioc的泛型是<Object, Object>，所以类型匹配不上，
-     * resource是会先根据名字去匹配的，所以使用Resource注解可以成功注入
-     */
-    @Resource
-    private RedisTemplate<String, V> redisTemplate;
+    private final RedisTemplate<Object, V> redisTemplate;
 
-    @Resource
-    private RedisTemplate<String, Object> redisHashTemplate;
+    private final RedisTemplate<Object, Object> redisHashTemplate;
 
     /**
      * 设置key的过期时间
@@ -304,7 +299,7 @@ public class RedisOperator<V> {
      *
      * @return ValueOperations
      */
-    private ValueOperations<String, V> valueOperations() {
+    private ValueOperations<Object, V> valueOperations() {
         return redisTemplate.opsForValue();
     }
 
@@ -313,7 +308,7 @@ public class RedisOperator<V> {
      *
      * @return ValueOperations
      */
-    private HashOperations<String, String, Object> hashOperations() {
+    private HashOperations<Object, String, Object> hashOperations() {
         return redisHashTemplate.opsForHash();
     }
 
@@ -322,7 +317,7 @@ public class RedisOperator<V> {
      *
      * @return ValueOperations
      */
-    private ListOperations<String, V> listOperations() {
+    private ListOperations<Object, V> listOperations() {
         return redisTemplate.opsForList();
     }
 

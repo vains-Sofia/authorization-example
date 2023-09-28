@@ -75,16 +75,4 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    /**
-     * 操作hash的情况下使用
-     *
-     * @param connectionFactory redis链接工厂
-     * @return RedisTemplate
-     */
-    @Bean
-    public RedisTemplate<Object, Object> redisHashTemplate(RedisConnectionFactory connectionFactory) {
-
-        return redisTemplate(connectionFactory);
-    }
-
 }
