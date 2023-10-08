@@ -21,7 +21,7 @@ spring:
             # 客户端秘钥，使用自己的gitee的客户端秘钥
             client-secret: 59b069e525b84cac8fcb854148b623743eefd6bbe9d54433c006ec0c2f785c4d
             # 回调地址
-            redirect-uri: http://192.168.119.1:8080/login/oauth2/code/gitee
+            redirect-uri: ${custom.security.issuer-url}/login/oauth2/code/gitee
             # 申请scope列表
             scope:
               - emails
@@ -31,6 +31,8 @@ spring:
             provider: github
             client-id: 88c69e87b2e50d2dab4d
             client-secret: 350b351e8287fc142d01082bcf0dc5c6df7c21ae
+            # 回调地址
+            redirect-uri: ${custom.security.issuer-url}/login/oauth2/code/github
           wechat:
             # 微信登录配置
             provider: wechat
@@ -43,7 +45,7 @@ spring:
             # 客户端秘钥，使用自己的微信的app secret
             client-secret: e4635ff2ed22c83294394ac818cf75a7
             # 回调地址
-            redirect-uri: http://192.168.119.1:8080/login/oauth2/code/wechat
+            redirect-uri: ${custom.security.issuer-url}/login/oauth2/code/wechat
             # 申请scope列表
             scope: snsapi_userinfo
 
@@ -81,20 +83,20 @@ spring:
 mybatis-plus:
   # 扫描mapper文件
   mapper-locations:
-    - classpath:com/vains/mapper/xml/*Mapper.xml
+    - classpath:com/example/mapper/xml/*Mapper.xml
 
 custom:
   # 自定义认证配置
   security:
     # 登录页面路径
-    login-url: http://127.0.0.1:5173/login
+    login-url: https://vains-sofia.gitee.io/login
     # 授权确认页面路径
-    consent-page-uri: http://127.0.0.1:5173/consent
+    consent-page-uri: https://vains-sofia.gitee.io/consent
     # 设备码验证页面
-    device-activate-uri: http://127.0.0.1:5173/activate
+    device-activate-uri: https://vains-sofia.gitee.io/activate
     # 设备码验证成功页面
-    device-activated-uri: http://127.0.0.1:5173/activated
+    device-activated-uri: https://vains-sofia.gitee.io/activated
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico
     # 当前认证服务访问的路径
-    issuer-url: http://192.168.120.33:8080
+    issuer-url: https://oauth-vains.koyeb.app
