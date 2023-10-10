@@ -6,8 +6,8 @@ import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
 import com.example.constant.RedisConstants;
 import com.example.constant.SecurityConstants;
 import com.example.property.CustomSecurityProperties;
+import com.example.repository.RedisSecurityContextRepository;
 import com.example.support.RedisOperator;
-import com.example.support.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -26,7 +26,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
@@ -175,19 +174,6 @@ public class AuthorizationConfig {
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         // 基于db存储客户端，还有一个基于内存的实现 InMemoryRegisteredClientRepository
         return new JdbcRegisteredClientRepository(jdbcTemplate);
-    }
-
-    /**
-     * 配置基于db的oauth2的授权管理服务
-     *
-     * @param jdbcTemplate               db数据源信息
-     * @param registeredClientRepository 上边注入的客户端repository
-     * @return JdbcOAuth2AuthorizationService
-     */
-    @Bean
-    public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
-        // 基于db的oauth2认证服务，还有一个基于内存的服务实现InMemoryOAuth2AuthorizationService
-        return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
     }
 
     /**

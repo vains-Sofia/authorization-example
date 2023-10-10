@@ -5,7 +5,7 @@ import com.example.authorization.baisc.BasicAuthorizationRequestResolver;
 import com.example.authorization.handler.LoginFailureHandler;
 import com.example.authorization.handler.LoginSuccessHandler;
 import com.example.property.CustomSecurityProperties;
-import com.example.support.RedisSecurityContextRepository;
+import com.example.repository.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

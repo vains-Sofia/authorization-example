@@ -8,7 +8,7 @@ import com.example.authorization.handler.DeviceAuthorizationResponseHandler;
 import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
 import com.example.constant.SecurityConstants;
 import com.example.property.CustomSecurityProperties;
-import com.example.support.RedisSecurityContextRepository;
+import com.example.repository.RedisSecurityContextRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
