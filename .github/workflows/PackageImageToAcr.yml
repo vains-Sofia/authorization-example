@@ -60,7 +60,7 @@ jobs:
       # 登录阿里云镜像仓库
       - name: Login Alibaba ACR
         run:
-          docker login --username=${{ env.USERMAME }} --password=${{ env.PASSWORD }} ${{ env.REGISTRY }}
+          echo "${{ env.PASSWORD }}" | docker login --username=${{ env.USERMAME }} --password-stdin ${{ env.REGISTRY }}
 
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
