@@ -51,16 +51,24 @@ jobs:
       #     context: . # 相对以远程仓库根路径的dockerfile的路径
       #     file: ./NetByDocker/Dockerfile # 指定Dockerfile
  
-      - name: Build the Docker image
+      - name: Show version
         run:
           docker version
+
+      - name: Login Alibaba ACR
+        run:
           # 登录阿里云镜像仓库
           docker login --username=${{ secrets.USERMAME }} --password=${{ secrets.PASSWORD }} ${{ env.REGISTRY }}
+
+      - name: Build the Docker image
+        run:
           # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
           cd authorization-server && docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${env.IMAGE_NAME}:${{env.IMAGE_TAG}} --tag ${{ env.REGISTRY }}/${env.IMAGE_NAME}:${{ github.run_number }}
+
+      - name: Push to ACR
+        run:
           # 推送镜像到镜像仓库
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
  
       # 列出所有镜像    
       - name: Docker Images Lst 
