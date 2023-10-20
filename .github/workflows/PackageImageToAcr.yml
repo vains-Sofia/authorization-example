@@ -55,19 +55,19 @@ jobs:
         run:
           docker version
 
+      # 登录阿里云镜像仓库
       - name: Login Alibaba ACR
         run:
-          # 登录阿里云镜像仓库
           docker login --username=${{ secrets.USERMAME }} --password=${{ secrets.PASSWORD }} ${{ env.REGISTRY }}
 
+      # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
         run:
-          # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
           cd authorization-server && docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${env.IMAGE_NAME}:${{env.IMAGE_TAG}} --tag ${{ env.REGISTRY }}/${env.IMAGE_NAME}:${{ github.run_number }}
 
+      # 推送镜像到镜像仓库
       - name: Push to ACR
         run:
-          # 推送镜像到镜像仓库
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
  
       # 列出所有镜像    
