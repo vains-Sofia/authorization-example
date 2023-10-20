@@ -9,6 +9,8 @@ env:
   REGISTRY: registry.cn-guangzhou.aliyuncs.com
   IMAGE_NAME: vains/authorization-example
   IMAGE_TAG: latest
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
  
 jobs:
   build:
@@ -34,8 +36,8 @@ jobs:
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.USERNAME }} # 镜像仓库用户名
-          password: ${{ secrets.PASSWORD }} # 镜像仓库密码
+          username: ${{ env.USERNAME }}
+          password: ${{ env.PASSWORD }}
  
       # 生成和推送镜像  阿里云镜像仓库推送有问题
       # # https://github.com/docker/build-push-action
@@ -58,7 +60,7 @@ jobs:
       # 登录阿里云镜像仓库
       - name: Login Alibaba ACR
         run:
-          docker login --username=${{ secrets.USERMAME }} --password=${{ secrets.PASSWORD }} ${{ env.REGISTRY }}
+          docker login --username=${{ env.USERMAME }} --password=${{ env.PASSWORD }} ${{ env.REGISTRY }}
 
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
