@@ -34,7 +34,7 @@ jobs:
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.USERMAME }} # 镜像仓库用户名
+          username: ${{ secrets.USERNAME }} # 镜像仓库用户名
           password: ${{ secrets.PASSWORD }} # 镜像仓库密码
  
       # 生成和推送镜像  阿里云镜像仓库推送有问题
