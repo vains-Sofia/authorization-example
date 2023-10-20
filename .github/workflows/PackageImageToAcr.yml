@@ -52,7 +52,7 @@ jobs:
       #     file: ./NetByDocker/Dockerfile # 指定Dockerfile
  
       - name: Build the Docker image
-        run: |
+        run:
           docker version
           # 登录阿里云镜像仓库
           docker login --username=${{ secrets.USERMAME }} --password=${{ secrets.PASSWORD }} ${{ env.REGISTRY }}
