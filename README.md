@@ -2,7 +2,7 @@
 
 ## 项目说明
 
-本项目如标题所说，是Spring oauth2 authorization server的一个整合项目。
+Spring OAuth2 Authorization Server集成与拓展项目，包括认证服务搭建、三方登录对接、自定义grant_type方式获取token、前后端分离实现，客户端、资源服务、前端单体项目对接认证服务实现等。
 
 ## 项目Wiki地址(持续更新)
 
@@ -89,6 +89,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://juejin.cn/spost/7271496874942890024)**<br>
 **[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://juejin.cn/post/7279052777888890921)**<br>
 **[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://juejin.cn/post/7279265985912225828)**<br>
+**[Spring Authorization Server入门 (十九) 基于Redis的Token、客户端信息和授权确认信息存储](https://juejin.cn/post/7294853623849254946)**<br>
 
 ### CSDN
 
@@ -110,6 +111,7 @@ authorization-example # 最外层目录
 **[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132517747)**<br>
 **[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949746)**<br>
 **[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949801)**<br>
+**[Spring Authorization Server入门 (十九) 基于Redis的Token、客户端信息和授权确认信息存储](https://blog.csdn.net/weixin_43356507/article/details/134098583)**<br>
 
 ## 赞赏
 
