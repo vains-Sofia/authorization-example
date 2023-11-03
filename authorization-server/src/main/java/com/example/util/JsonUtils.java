@@ -121,7 +121,7 @@ public class JsonUtils {
      * @return 返回T的实例
      */
     public static <T> T jsonCovertToObject(String json, Class<?> collectionClazz, Class<?>... elementsClazz) {
-        if (json == null || collectionClazz == null || elementsClazz == null) {
+        if (json == null || collectionClazz == null || elementsClazz == null || elementsClazz.length <=0 ) {
             return null;
         }
         try {
