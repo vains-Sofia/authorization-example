@@ -1,6 +1,5 @@
 package com.example.strategy.context;
 
-import com.example.entity.Oauth2ThirdAccount;
 import com.example.model.security.BasicOAuth2User;
 import com.example.strategy.Oauth2UserConverterStrategy;
 import lombok.RequiredArgsConstructor;

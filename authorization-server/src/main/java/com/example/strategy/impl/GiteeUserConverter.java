@@ -1,6 +1,5 @@
 package com.example.strategy.impl;
 
-import com.example.entity.Oauth2ThirdAccount;
 import com.example.model.security.BasicOAuth2User;
 import com.example.strategy.Oauth2UserConverterStrategy;
 import org.springframework.security.oauth2.core.user.OAuth2User;
