@@ -49,7 +49,7 @@ public class RedisOperator<V> {
         if (ObjectUtils.isEmpty(keys)) {
             return 0L;
         }
-        return redisTemplate.delete(Arrays.asList((Object[])keys));
+        return redisTemplate.delete(Arrays.asList(keys));
     }
 
     /**
