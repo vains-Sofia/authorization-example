@@ -31,6 +31,7 @@ public class BeanConfig {
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
         configuration.addAllowedOrigin("http://192.168.1.102:5173");
         configuration.addAllowedOrigin("http://192.168.119.1:5173");
+        configuration.addAllowedOrigin("http://k7fsqkhtbx.cdhttp.cn");
         configuration.addAllowedOrigin("https://vains-sofia.gitee.io");
         // 设置跨域访问可以携带cookie
         configuration.setAllowCredentials(true);
