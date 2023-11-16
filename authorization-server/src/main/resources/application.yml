@@ -99,4 +99,4 @@ custom:
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico
     # 当前认证服务访问的路径
-    issuer-url: https://oauth-hwrjm8vk.b4a.run
+    issuer-url: https://oauth1-m38kr34s.b4a.run
