@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.web.OAuth2ClientAuthenticationFilter;
+import org.springframework.util.ObjectUtils;
 
 /**
  * 设备码认证提供者
@@ -60,8 +61,10 @@ public final class DeviceClientAuthenticationProvider implements AuthenticationP
         }
 
         // 校验客户端
-        if (!registeredClient.getClientAuthenticationMethods().contains(
-                deviceClientAuthentication.getClientAuthenticationMethod())) {
+        if (registeredClient == null
+            || ObjectUtils.isEmpty(registeredClient.getClientAuthenticationMethods())
+            || !registeredClient.getClientAuthenticationMethods().contains(
+                    deviceClientAuthentication.getClientAuthenticationMethod())) {
             throwInvalidClient("authentication_method");
         }
 
@@ -74,7 +77,7 @@ public final class DeviceClientAuthenticationProvider implements AuthenticationP
         }
 
         return new DeviceClientAuthenticationToken(registeredClient,
-                deviceClientAuthentication.getClientAuthenticationMethod(), null);
+                                                   deviceClientAuthentication.getClientAuthenticationMethod(), null);
     }
 
     @Override
