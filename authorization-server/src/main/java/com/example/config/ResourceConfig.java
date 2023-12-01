@@ -5,7 +5,6 @@ import com.example.authorization.baisc.BasicAuthorizationRequestResolver;
 import com.example.authorization.handler.LoginFailureHandler;
 import com.example.authorization.handler.LoginSuccessHandler;
 import com.example.property.CustomSecurityProperties;
-import com.example.repository.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +44,6 @@ public class ResourceConfig {
 
     private final BasicAccessTokenResponseClient accessTokenResponseClient;
 
-    private final RedisSecurityContextRepository redisSecurityContextRepository;
-
     private final BasicAuthorizationRequestResolver authorizationRequestResolver;
 
     /**
@@ -59,33 +56,33 @@ public class ResourceConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // 添加基础的认证配置
-        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties, redisSecurityContextRepository);
+        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties);
 
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源和不需要认证的url
                         .requestMatchers(customSecurityProperties.getIgnoreUriList().toArray(new String[0])).permitAll()
                         .anyRequest().authenticated()
-                )
+        )
                 // 指定登录页面
                 .formLogin(formLogin -> {
-                            formLogin.loginPage("/login");
-                            if (UrlUtils.isAbsoluteUrl(customSecurityProperties.getLoginUrl())) {
-                                // 绝对路径代表是前后端分离，登录成功和失败改为写回json，不重定向了
-                                formLogin.successHandler(new LoginSuccessHandler());
-                                formLogin.failureHandler(new LoginFailureHandler());
-                            }
-                        }
-                );
+                    formLogin.loginPage("/login");
+                    if (UrlUtils.isAbsoluteUrl(customSecurityProperties.getLoginUrl())) {
+                        // 绝对路径代表是前后端分离，登录成功和失败改为写回json，不重定向了
+                        formLogin.successHandler(new LoginSuccessHandler());
+                        formLogin.failureHandler(new LoginFailureHandler());
+                    }
+                }
+        );
 
         // 联合身份认证
         http.oauth2Login(oauth2Login -> oauth2Login
                 .loginPage(customSecurityProperties.getLoginUrl())
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(this.authorizationRequestResolver)
-                )
+        )
                 .tokenEndpoint(token -> token
                         .accessTokenResponseClient(this.accessTokenResponseClient)
-                )
+        )
         );
 
         return http.build();

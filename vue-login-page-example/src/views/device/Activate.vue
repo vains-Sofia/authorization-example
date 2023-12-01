@@ -26,7 +26,7 @@ const submit = () => {
     user_code: userCode.value.userCode
   }
 
-  deviceVerification(data, getQueryString('nonceId') as string)
+  deviceVerification(data)
     .then((result: any) => {
       if (result.success) {
         window.location.href = result.data

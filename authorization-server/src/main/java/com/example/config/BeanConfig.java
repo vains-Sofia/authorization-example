@@ -29,8 +29,7 @@ public class BeanConfig {
 
         // 设置允许跨域的域名,如果允许携带cookie的话,路径就不能写*号, *表示所有的域名都可以跨域访问
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
-        configuration.addAllowedOrigin("http://192.168.1.102:5173");
-        configuration.addAllowedOrigin("http://192.168.119.1:5173");
+        configuration.addAllowedOrigin("http://login.flow.com");
         configuration.addAllowedOrigin("http://k7fsqkhtbx.cdhttp.cn");
         configuration.addAllowedOrigin("https://vains-sofia.gitee.io");
         // 设置跨域访问可以携带cookie

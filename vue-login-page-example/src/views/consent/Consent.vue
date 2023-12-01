@@ -61,8 +61,7 @@ const submitApprove = (cancel: boolean) => {
   submitApproveScope(
     // @ts-ignore
     new URLSearchParams(data),
-    consentResult.value.requestURI,
-    getQueryString('nonceId') as string
+    consentResult.value.requestURI
   )
     .then((result: any) => {
       if (result.success) {

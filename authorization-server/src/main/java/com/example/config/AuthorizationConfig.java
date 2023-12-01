@@ -6,7 +6,6 @@ import com.example.authorization.sms.SmsCaptchaGrantAuthenticationProvider;
 import com.example.constant.RedisConstants;
 import com.example.constant.SecurityConstants;
 import com.example.property.CustomSecurityProperties;
-import com.example.repository.RedisSecurityContextRepository;
 import com.example.support.RedisOperator;
 import com.example.util.SecurityUtils;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -60,8 +59,6 @@ public class AuthorizationConfig {
 
     private final CustomSecurityProperties customSecurityProperties;
 
-    private final RedisSecurityContextRepository redisSecurityContextRepository;
-
     /**
      * 配置端点的过滤器链
      *
@@ -77,7 +74,7 @@ public class AuthorizationConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         // 添加基础的认证配置
-        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties, redisSecurityContextRepository);
+        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties);
 
         // 设置设备码配置
         SecurityUtils.applyDeviceSecurity(http, customSecurityProperties, registeredClientRepository, authorizationServerSettings);
@@ -228,9 +225,9 @@ public class AuthorizationConfig {
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
                 /*
-                    设置token签发地址(http(s)://{ip}:{port}/context-path, http(s)://domain.com/context-path)
-                    如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
-                 */
+设置token签发地址(http(s)://{ip}:{port}/context-path, http(s)://domain.com/context-path)
+如果需要通过ip访问这里就是ip，如果是有域名映射就填域名，通过什么方式访问该服务这里就填什么
+*/
                 .issuer(customSecurityProperties.getIssuerUrl())
                 .build();
     }

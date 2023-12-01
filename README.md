@@ -30,7 +30,7 @@ Spring OAuth2 Authorization Server集成与拓展项目，包括认证服务搭�
 
 自定义grant_type
 
-授权码模式使用前后端分离的登录页面
+授权码模式使用前后端分离的登录页面(session-data-redis分支实现了无需额外代码的前后端分离)
 
 联合身份认证(现已集成Github、Gitee登录和微信登录)
 
