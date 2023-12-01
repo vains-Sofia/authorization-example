@@ -24,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,7 +31,11 @@ import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.example.constant.SecurityConstants.NONCE_HEADER_NAME;
 
@@ -69,23 +72,23 @@ public class AuthorizationController {
                 .fromUriString(customSecurityProperties.getDeviceActivateUri())
                 .queryParam("userCode", userCode)
                 .queryParam(NONCE_HEADER_NAME, session.getId());
-        return "redirect:" + uriBuilder.build(Boolean.TRUE).toUriString();
-    }
+		return "redirect:" + uriBuilder.build(Boolean.TRUE).toUriString();
+	}
 
-    @GetMapping("/activated")
+	@GetMapping("/activated")
     public String activated() {
-        return "device-activated";
-    }
+		return "device-activated";
+	}
 
-    @GetMapping(value = "/", params = "success")
+	@GetMapping(value = "/", params = "success")
     public String success() {
-        return "device-activated";
-    }
+		return "device-activated";
+	}
 
-    @ResponseBody
+	@ResponseBody
     @GetMapping(value = "/")
     public String index() {
-        return """
+		return """
                     <h3>根目录什么都没有，试着发起授权申请流程吧</h3>
                     简单说下为什么会跳转到根目录，大概有以下几种情况：<br>
                     <ol>
@@ -101,78 +104,75 @@ public class AuthorizationController {
                     地址，所以默认就跳转到根目录了。<br>
                     如果还有别的情况也可以继续补充。
                 """;
-    }
+	}
 
-    @GetMapping("/login")
+	@GetMapping("/login")
     public String login(Model model, HttpSession session) {
-        Object attribute = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-        if (attribute instanceof AuthenticationException exception) {
-            model.addAttribute("error", exception.getMessage());
-        }
-        return "login";
-    }
+		Object attribute = session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+		if (attribute instanceof AuthenticationException exception) {
+			model.addAttribute("error", exception.getMessage());
+		}
+		return "login";
+	}
 
-    @GetMapping(value = "/oauth2/consent")
+	@GetMapping(value = "/oauth2/consent")
     public String consent(Principal principal, Model model,
-                          @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
-                          @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
-                          @RequestParam(OAuth2ParameterNames.STATE) String state,
-                          @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+						  @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+						  @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+						  @RequestParam(OAuth2ParameterNames.STATE) String state,
+						  @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
 
-        // 获取consent页面所需的参数
-        Map<String, Object> consentParameters = getConsentParameters(scope, state, clientId, userCode, principal);
-        // 转至model中，让框架渲染页面
-        consentParameters.forEach(model::addAttribute);
+		// 获取consent页面所需的参数
+		Map<String, Object> consentParameters = getConsentParameters(scope, state, clientId, userCode, principal);
+		// 转至model中，让框架渲染页面
+		consentParameters.forEach(model::addAttribute);
 
-        return "consent";
-    }
+		return "consent";
+	}
 
-    @SneakyThrows
+	@SneakyThrows
     @ResponseBody
     @GetMapping(value = "/oauth2/consent/redirect")
-    public Result<String> consentRedirect(HttpSession session,
-                                          HttpServletRequest request,
-                                          HttpServletResponse response,
-                                          @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
-                                          @RequestParam(OAuth2ParameterNames.STATE) String state,
-                                          @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
-                                          @RequestHeader(name = NONCE_HEADER_NAME, required = false) String nonceId,
-                                          @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+    public Result<String> consentRedirect(HttpServletRequest request,
+										  HttpServletResponse response,
+										  @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+										  @RequestParam(OAuth2ParameterNames.STATE) String state,
+										  @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+										  @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
 
-        // 携带当前请求参数与nonceId重定向至前端页面
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+		// 携带当前请求参数重定向至前端页面
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(customSecurityProperties.getConsentPageUri())
                 .queryParam(OAuth2ParameterNames.SCOPE, UriUtils.encode(scope, StandardCharsets.UTF_8))
                 .queryParam(OAuth2ParameterNames.STATE, UriUtils.encode(state, StandardCharsets.UTF_8))
                 .queryParam(OAuth2ParameterNames.CLIENT_ID, clientId)
-                .queryParam(OAuth2ParameterNames.USER_CODE, userCode)
-                .queryParam(NONCE_HEADER_NAME, ObjectUtils.isEmpty(nonceId) ? session.getId() : nonceId);
+                .queryParam(OAuth2ParameterNames.USER_CODE, userCode);
 
-        String uriString = uriBuilder.build(Boolean.TRUE).toUriString();
-        if (ObjectUtils.isEmpty(userCode) || !UrlUtils.isAbsoluteUrl(customSecurityProperties.getDeviceActivateUri())) {
-            // 不是设备码模式或者设备码验证页面不是前后端分离的，无需返回json，直接重定向
-            redirectStrategy.sendRedirect(request, response, uriString);
-            return null;
-        }
-        // 兼容设备码，需响应JSON，由前端进行跳转
-        return Result.success(uriString);
-    }
+		String uriString = uriBuilder.build(Boolean.TRUE).toUriString();
+		if (ObjectUtils.isEmpty(userCode) || !UrlUtils.isAbsoluteUrl(customSecurityProperties.getDeviceActivateUri())) {
+			// 不是设备码模式或者设备码验证页面不是前后端分离的，无需返回json，直接重定向
+			redirectStrategy.sendRedirect(request, response, uriString);
+			return null;
+		}
+		// 兼容设备码，需响应JSON，由前端进行跳转
+		return Result.success(uriString);
+	}
 
-    @ResponseBody
+	@ResponseBody
     @GetMapping(value = "/oauth2/consent/parameters")
     public Result<Map<String, Object>> consentParameters(Principal principal,
-                                                         @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
-                                                         @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
-                                                         @RequestParam(OAuth2ParameterNames.STATE) String state,
-                                                         @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
+														 @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
+														 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
+														 @RequestParam(OAuth2ParameterNames.STATE) String state,
+														 @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
 
-        // 获取consent页面所需的参数
-        Map<String, Object> consentParameters = getConsentParameters(scope, state, clientId, userCode, principal);
+		// 获取consent页面所需的参数
+		Map<String, Object> consentParameters = getConsentParameters(scope, state, clientId, userCode, principal);
 
-        return Result.success(consentParameters);
-    }
+		return Result.success(consentParameters);
+	}
 
-    /**
+	/**
      * 根据授权确认相关参数获取授权确认与未确认的scope相关参数
      *
      * @param scope     scope权限
@@ -183,97 +183,97 @@ public class AuthorizationController {
      * @return 页面所需数据
      */
     private Map<String, Object> getConsentParameters(String scope,
-                                                     String state,
-                                                     String clientId,
-                                                     String userCode,
-                                                     Principal principal) {
+													 String state,
+													 String clientId,
+													 String userCode,
+													 Principal principal) {
 
-        if (principal == null) {
-            throw new RuntimeException("认证信息已失效.");
-        }
+		if (principal == null) {
+			throw new RuntimeException("认证信息已失效.");
+		}
 
-        // Remove scopes that were already approved
-        Set<String> scopesToApprove = new HashSet<>();
-        Set<String> previouslyApprovedScopes = new HashSet<>();
-        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
-        if (registeredClient == null) {
-            throw new RuntimeException("客户端不存在");
-        }
-        OAuth2AuthorizationConsent currentAuthorizationConsent =
+		// Remove scopes that were already approved
+		Set<String> scopesToApprove = new HashSet<>();
+		Set<String> previouslyApprovedScopes = new HashSet<>();
+		RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
+		if (registeredClient == null) {
+			throw new RuntimeException("客户端不存在");
+		}
+		OAuth2AuthorizationConsent currentAuthorizationConsent =
                 this.authorizationConsentService.findById(registeredClient.getId(), principal.getName());
-        Set<String> authorizedScopes;
-        if (currentAuthorizationConsent != null) {
-            authorizedScopes = currentAuthorizationConsent.getScopes();
-        } else {
-            authorizedScopes = Collections.emptySet();
-        }
-        for (String requestedScope : StringUtils.delimitedListToStringArray(scope, " ")) {
-            if (OidcScopes.OPENID.equals(requestedScope)) {
-                continue;
-            }
-            if (authorizedScopes.contains(requestedScope)) {
-                previouslyApprovedScopes.add(requestedScope);
-            } else {
-                scopesToApprove.add(requestedScope);
-            }
-        }
+		Set<String> authorizedScopes;
+		if (currentAuthorizationConsent != null) {
+			authorizedScopes = currentAuthorizationConsent.getScopes();
+		} else {
+			authorizedScopes = Collections.emptySet();
+		}
+		for (String requestedScope : StringUtils.delimitedListToStringArray(scope, " ")) {
+			if (OidcScopes.OPENID.equals(requestedScope)) {
+				continue;
+			}
+			if (authorizedScopes.contains(requestedScope)) {
+				previouslyApprovedScopes.add(requestedScope);
+			} else {
+				scopesToApprove.add(requestedScope);
+			}
+		}
 
-        Map<String, Object> parameters = new HashMap<>(7);
-        parameters.put("clientId", registeredClient.getClientId());
-        parameters.put("clientName", registeredClient.getClientName());
-        parameters.put("state", state);
-        parameters.put("scopes", withDescription(scopesToApprove));
-        parameters.put("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
-        parameters.put("principalName", principal.getName());
-        parameters.put("userCode", userCode);
-        if (StringUtils.hasText(userCode)) {
-            parameters.put("requestURI", "/oauth2/device_verification");
-        } else {
-            parameters.put("requestURI", "/oauth2/authorize");
-        }
-        return parameters;
-    }
+		Map<String, Object> parameters = new HashMap<>(7);
+		parameters.put("clientId", registeredClient.getClientId());
+		parameters.put("clientName", registeredClient.getClientName());
+		parameters.put("state", state);
+		parameters.put("scopes", withDescription(scopesToApprove));
+		parameters.put("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
+		parameters.put("principalName", principal.getName());
+		parameters.put("userCode", userCode);
+		if (StringUtils.hasText(userCode)) {
+			parameters.put("requestURI", "/oauth2/device_verification");
+		} else {
+			parameters.put("requestURI", "/oauth2/authorize");
+		}
+		return parameters;
+	}
 
-    private static Set<ScopeWithDescription> withDescription(Set<String> scopes) {
-        Set<ScopeWithDescription> scopeWithDescriptions = new HashSet<>();
-        for (String scope : scopes) {
-            scopeWithDescriptions.add(new ScopeWithDescription(scope));
+	private static Set<ScopeWithDescription> withDescription(Set<String> scopes) {
+		Set<ScopeWithDescription> scopeWithDescriptions = new HashSet<>();
+		for (String scope : scopes) {
+			scopeWithDescriptions.add(new ScopeWithDescription(scope));
 
-        }
-        return scopeWithDescriptions;
-    }
+		}
+		return scopeWithDescriptions;
+	}
 
-    @Data
+	@Data
     public static class ScopeWithDescription {
-        private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
-        private static final Map<String, String> scopeDescriptions = new HashMap<>();
+		private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
+		private static final Map<String, String> scopeDescriptions = new HashMap<>();
 
-        static {
-            scopeDescriptions.put(
-                    OidcScopes.PROFILE,
-                    "This application will be able to read your profile information."
-            );
-            scopeDescriptions.put(
-                    "message.read",
-                    "This application will be able to read your message."
-            );
-            scopeDescriptions.put(
-                    "message.write",
-                    "This application will be able to add new messages. It will also be able to edit and delete existing messages."
-            );
-            scopeDescriptions.put(
-                    "other.scope",
-                    "This is another scope example of a scope description."
-            );
-        }
+		static {
+			scopeDescriptions.put(
+					OidcScopes.PROFILE,
+					"This application will be able to read your profile information."
+			);
+			scopeDescriptions.put(
+					"message.read",
+					"This application will be able to read your message."
+			);
+			scopeDescriptions.put(
+					"message.write",
+					"This application will be able to add new messages. It will also be able to edit and delete existing messages."
+			);
+			scopeDescriptions.put(
+					"other.scope",
+					"This is another scope example of a scope description."
+			);
+		}
 
-        public final String scope;
-        public final String description;
+	public final String scope;
+		public final String description;
 
-        ScopeWithDescription(String scope) {
-            this.scope = scope;
-            this.description = scopeDescriptions.getOrDefault(scope, DEFAULT_DESCRIPTION);
-        }
-    }
+		ScopeWithDescription(String scope) {
+			this.scope = scope;
+			this.description = scopeDescriptions.getOrDefault(scope, DEFAULT_DESCRIPTION);
+		}
+	}
 
 }
