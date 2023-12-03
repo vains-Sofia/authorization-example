@@ -45,7 +45,6 @@ export function loginSubmit(data: any) {
         url: '/login',
         data,
         headers: {
-            nonceId: data.nonceId,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     })
@@ -78,15 +77,13 @@ export function getConsentParameters(queryString: string) {
  * 提交授权确认
  * @param data 客户端、scope等
  * @param requestUrl 请求地址(授权码与设备码授权提交不一样)
- * @param nonceId 保持登录状态
  * @returns 是否确认成功
  */
-export function submitApproveScope(data: any, requestUrl: string, nonceId: string) {
+export function submitApproveScope(data: any, requestUrl: string) {
     return loginRequest.post<any>({
         url: requestUrl,
         data,
         headers: {
-            nonceId,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     })
@@ -95,15 +92,13 @@ export function submitApproveScope(data: any, requestUrl: string, nonceId: strin
 /**
  * 验证设备码
  * @param data user_code，设备码
- * @param nonceId 保持登录状态
  * @returns 是否确认成功
  */
-export function deviceVerification(data: any, nonceId: string) {
+export function deviceVerification(data: any) {
     return loginRequest.post<any>({
         url: `/oauth2/device_verification`,
         data,
         headers: {
-            nonceId,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     })

@@ -89,14 +89,20 @@ custom:
   # 自定义认证配置
   security:
     # 登录页面路径
-    login-url: https://vains-sofia.gitee.io/login
+    login-url: http://k7fsqkhtbx.cdhttp.cn/login
     # 授权确认页面路径
-    consent-page-uri: https://vains-sofia.gitee.io/consent
+    consent-page-uri: http://k7fsqkhtbx.cdhttp.cn/consent
     # 设备码验证页面
-    device-activate-uri: https://vains-sofia.gitee.io/activate
+    device-activate-uri: http://k7fsqkhtbx.cdhttp.cn/activate
     # 设备码验证成功页面
-    device-activated-uri: https://vains-sofia.gitee.io/activated
+    device-activated-uri: http://k7fsqkhtbx.cdhttp.cn/activated
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico
     # 当前认证服务访问的路径
-    issuer-url: https://oauth1-m38kr34s.b4a.run
+    issuer-url: http://kwqqr48rgo.cdhttp.cn
+
+server:
+  servlet:
+    session:
+      cookie:
+        domain: cdhttp.cn

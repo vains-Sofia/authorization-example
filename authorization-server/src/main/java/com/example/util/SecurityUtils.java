@@ -8,7 +8,6 @@ import com.example.authorization.handler.DeviceAuthorizationResponseHandler;
 import com.example.authorization.handler.LoginTargetAuthenticationEntryPoint;
 import com.example.constant.SecurityConstants;
 import com.example.property.CustomSecurityProperties;
-import com.example.repository.RedisSecurityContextRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
@@ -51,8 +50,6 @@ import java.util.Map;
 public class SecurityUtils {
 
     private static final String CUSTOM_DEVICE_REDIRECT_URI = "/activate/redirect";
-
-    private static final String CUSTOM_CONSENT_REDIRECT_URI = "/oauth2/consent/redirect";
 
     private SecurityUtils() {
         // 禁止实例化工具类
@@ -198,15 +195,13 @@ public class SecurityUtils {
      * 添加基础认证配置
      * 开启认证服务OIDC配置，禁用 csrf 与 cors，配置认证存储方式，设置跳转至登录页面逻辑，添加资源服务配置
      *
-     * @param http                           Security核心配置类
-     * @param redisSecurityContextRepository 基于redis存储认证信息
-     * @param corsFilter                     跨域处理过滤器
+     * @param http       Security核心配置类
+     * @param corsFilter 跨域处理过滤器
      */
     @SneakyThrows
     public static void applyBasicSecurity(HttpSecurity http,
                                           CorsFilter corsFilter,
-                                          CustomSecurityProperties customSecurityProperties,
-                                          RedisSecurityContextRepository redisSecurityContextRepository) {
+                                          CustomSecurityProperties customSecurityProperties) {
         // 添加跨域过滤器
         http.addFilter(corsFilter);
 
@@ -231,9 +226,6 @@ public class SecurityUtils {
         // 禁用 csrf 与 cors
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(AbstractHttpConfigurer::disable);
-
-        // 使用redis存储、读取登录的认证信息
-        http.securityContext(context -> context.securityContextRepository(redisSecurityContextRepository));
 
         http
                 // 当未登录时访问认证端点时重定向至login页面
@@ -276,7 +268,7 @@ public class SecurityUtils {
                             // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
                             boolean absoluteUrl = UrlUtils.isAbsoluteUrl(customSecurityProperties.getConsentPageUri());
                             // 如果是分离页面则重定向，否则转发请求
-                            authorizationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : customSecurityProperties.getConsentPageUri());
+                            authorizationEndpoint.consentPage(customSecurityProperties.getConsentPageUri());
                             if (absoluteUrl) {
                                 // 适配前后端分离的授权确认页面，成功/失败响应json
                                 authorizationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler(customSecurityProperties.getConsentPageUri()));
@@ -293,7 +285,7 @@ public class SecurityUtils {
                             // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
                             boolean absoluteUrl = UrlUtils.isAbsoluteUrl(customSecurityProperties.getConsentPageUri());
                             // 如果是分离页面则重定向，否则转发请求
-                            deviceVerificationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : customSecurityProperties.getConsentPageUri());
+                            deviceVerificationEndpoint.consentPage(customSecurityProperties.getConsentPageUri());
                             if (absoluteUrl) {
                                 // 适配前后端分离的授权确认页面，失败响应json
                                 deviceVerificationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler(customSecurityProperties.getConsentPageUri()));

@@ -24,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -130,23 +129,20 @@ public class AuthorizationController {
     @SneakyThrows
     @ResponseBody
     @GetMapping(value = "/oauth2/consent/redirect")
-    public Result<String> consentRedirect(HttpSession session,
-                                          HttpServletRequest request,
+    public Result<String> consentRedirect(HttpServletRequest request,
                                           HttpServletResponse response,
                                           @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
                                           @RequestParam(OAuth2ParameterNames.STATE) String state,
                                           @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
-                                          @RequestHeader(name = NONCE_HEADER_NAME, required = false) String nonceId,
                                           @RequestParam(name = OAuth2ParameterNames.USER_CODE, required = false) String userCode) {
 
-        // 携带当前请求参数与nonceId重定向至前端页面
+        // 携带当前请求参数重定向至前端页面
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(customSecurityProperties.getConsentPageUri())
                 .queryParam(OAuth2ParameterNames.SCOPE, UriUtils.encode(scope, StandardCharsets.UTF_8))
                 .queryParam(OAuth2ParameterNames.STATE, UriUtils.encode(state, StandardCharsets.UTF_8))
                 .queryParam(OAuth2ParameterNames.CLIENT_ID, clientId)
-                .queryParam(OAuth2ParameterNames.USER_CODE, userCode)
-                .queryParam(NONCE_HEADER_NAME, ObjectUtils.isEmpty(nonceId) ? session.getId() : nonceId);
+                .queryParam(OAuth2ParameterNames.USER_CODE, userCode);
 
         String uriString = uriBuilder.build(Boolean.TRUE).toUriString();
         if (ObjectUtils.isEmpty(userCode) || !UrlUtils.isAbsoluteUrl(customSecurityProperties.getDeviceActivateUri())) {

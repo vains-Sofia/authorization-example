@@ -5,7 +5,6 @@ import com.example.authorization.baisc.BasicAuthorizationRequestResolver;
 import com.example.authorization.handler.LoginFailureHandler;
 import com.example.authorization.handler.LoginSuccessHandler;
 import com.example.property.CustomSecurityProperties;
-import com.example.repository.RedisSecurityContextRepository;
 import com.example.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +44,6 @@ public class ResourceConfig {
 
     private final BasicAccessTokenResponseClient accessTokenResponseClient;
 
-    private final RedisSecurityContextRepository redisSecurityContextRepository;
-
     private final BasicAuthorizationRequestResolver authorizationRequestResolver;
 
     /**
@@ -59,7 +56,7 @@ public class ResourceConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // 添加基础的认证配置
-        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties, redisSecurityContextRepository);
+        SecurityUtils.applyBasicSecurity(http, corsFilter, customSecurityProperties);
 
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源和不需要认证的url

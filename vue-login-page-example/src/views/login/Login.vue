@@ -15,8 +15,7 @@ const loginModel = ref({
   username: '',
   password: '',
   loginType: '',
-  captchaId: '',
-  nonceId: getQueryString('nonceId')
+  captchaId: ''
 })
 
 // 图形验证码的base64数据
