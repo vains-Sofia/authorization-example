@@ -1,0 +1,16 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          # 匿名token自省端点
+          introspection-uri: http://127.0.0.1:8080/oauth2/introspect
+          # 客户端id
+          client-id: opaque-client
+          # 客户端秘钥
+          client-secret: 123456
+        jwt:
+          # token签发地址(认证服务根路径)
+          issuer-uri: http://127.0.0.1:8080
+server:
+  port: 8200
