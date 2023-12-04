@@ -198,7 +198,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
         ClientSettings.Builder builder = ClientSettings.builder()
                 .requireAuthorizationConsent(Boolean.TRUE);
 
-        TokenSettings tokenSettings = TokenSettings.builder()
+        TokenSettings.Builder tokenSettingsBuilder = TokenSettings.builder()
                 // 自包含token(jwt)
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                 // Access Token 存活时间：2小时
@@ -212,8 +212,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 // 刷新 Access Token 后是否重用 Refresh Token
                 .reuseRefreshTokens(Boolean.TRUE)
                 // 设置 Id Token 加密方式
-                .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
-                .build();
+                .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256);
 
         // 正常授权码客户端
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -240,7 +239,35 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 // 客户端设置，设置用户需要确认授权
                 .clientSettings(builder.build())
                 // token相关配置
-                .tokenSettings(tokenSettings)
+                .tokenSettings(tokenSettingsBuilder.build())
+                .build();
+
+        // 正常授权码客户端
+        RegisteredClient opaqueClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                // 客户端id
+                .clientId("opaque-client")
+                // 客户端名称
+                .clientName("匿名token")
+                // 客户端秘钥，使用密码解析器加密
+                .clientSecret(passwordEncoder.encode("123456"))
+                // 客户端认证方式，基于请求头的认证
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                // 配置资源服务器使用该客户端获取授权时支持的方式
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                // 指定scope
+                .scope("message.read")
+                .scope("message.write")
+                // 客户端设置，设置用户需要确认授权
+                .clientSettings(builder.build())
+                // token相关配置, 设置token为匿名token(opaque token)
+                .tokenSettings(tokenSettingsBuilder.accessTokenFormat(OAuth2TokenFormat.REFERENCE).build())
                 .build();
 
         // 设备码授权客户端
@@ -256,11 +283,11 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .scope("message.read")
                 .scope("message.write")
                 // token相关配置
-                .tokenSettings(tokenSettings)
+                .tokenSettings(tokenSettingsBuilder.build())
                 .build();
 
         // PKCE客户端
-        RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+     RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("pkce-message-client")
                 .clientName("PKCE流程")
                 // 公共客户端
@@ -276,13 +303,14 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .scope("message.read")
                 .scope("message.write")
                 // token相关配置
-                .tokenSettings(tokenSettings)
+                .tokenSettings(tokenSettingsBuilder.build())
                 .build();
 
-        // 初始化客户端
-        this.save(registeredClient);
-        this.save(deviceClient);
-        this.save(pkceClient);
+     // 初始化客户端
+     this.save(registeredClient);
+     this.save(deviceClient);
+     this.save(pkceClient);
+     this.save(opaqueClient);
     }
 
 }
