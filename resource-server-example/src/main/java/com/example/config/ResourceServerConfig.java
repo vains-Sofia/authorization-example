@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * OAuth2 Resource Server
  *
- * @author Yu jin xiang 2023/6/13
+ * @author vains
  */
 @Configuration
 @EnableWebSecurity
@@ -26,8 +26,8 @@ public class ResourceServerConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        // 可在此处添加自定义解析设置
-                        .jwt(Customizer.withDefaults())
+                                // 可在此处添加自定义解析设置
+                                .jwt(Customizer.withDefaults())
                         // 添加未携带token和权限不足异常处理(已在第五篇文章中说过)
 //                        .accessDeniedHandler(SecurityUtils::exceptionHandler)
 //                        .authenticationEntryPoint(SecurityUtils::exceptionHandler)
@@ -39,4 +39,3 @@ public class ResourceServerConfig {
     // (已在第六章中说过，这里就不重复实现了)
 
 }
-
