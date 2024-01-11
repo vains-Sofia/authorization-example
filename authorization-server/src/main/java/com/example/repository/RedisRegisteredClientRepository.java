@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * 基于redis的客户端repository实现
@@ -215,7 +214,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .idTokenSignatureAlgorithm(SignatureAlgorithm.RS256);
 
         // 正常授权码客户端
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient registeredClient = RegisteredClient.withId("messaging-client")
                 // 客户端id
                 .clientId("messaging-client")
                 // 客户端名称
@@ -230,6 +229,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://k7fsqkhtbx.cdhttp.cn/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
@@ -243,7 +243,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .build();
 
         // 正常授权码客户端
-        RegisteredClient opaqueClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient opaqueClient = RegisteredClient.withId("opaque-client")
                 // 客户端id
                 .clientId("opaque-client")
                 // 客户端名称
@@ -271,7 +271,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .build();
 
         // 设备码授权客户端
-        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient deviceClient = RegisteredClient.withId("device-message-client")
                 .clientId("device-message-client")
                 .clientName("普通公共客户端")
                 // 公共客户端
@@ -287,7 +287,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .build();
 
         // PKCE客户端
-     RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient pkceClient = RegisteredClient.withId("pkce-message-client")
                 .clientId("pkce-message-client")
                 .clientName("PKCE流程")
                 // 公共客户端
@@ -306,11 +306,11 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .tokenSettings(tokenSettingsBuilder.build())
                 .build();
 
-     // 初始化客户端
-     this.save(registeredClient);
-     this.save(deviceClient);
-     this.save(pkceClient);
-     this.save(opaqueClient);
+        // 初始化客户端
+        this.save(registeredClient);
+        this.save(deviceClient);
+        this.save(pkceClient);
+        this.save(opaqueClient);
     }
 
 }
