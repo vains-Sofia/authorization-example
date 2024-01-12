@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    nacos:
+      serverAddr: 127.0.0.1:8848
+      config:
+        import-check:
+          enabled: false
+  application:
+    name: monitor
+  security:
+    oauth2:
+      # 资源服务器配置
+      resourceserver:
+        jwt:
+          # Jwt中claims的iss属性，也就是jwt的签发地址，即认证服务器的根路径
+          # 资源服务器会进一步的配置，通过该地址获取公钥以解析jwt
+          issuer-uri: http://kwqqr48rgo.cdhttp.cn
+  boot:
+    admin:
+      ui:
+        public-url: http://127.0.0.1:7000/monitor
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"

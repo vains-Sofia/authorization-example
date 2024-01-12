@@ -39,6 +39,7 @@ public class ResourceServerConfig {
 
         // 开启全局验证
         http.authorizeExchange((authorize) -> authorize
+                .pathMatchers("/actuator/**").permitAll()
                 //全部需要认证
                 .anyExchange().authenticated()
         );
@@ -53,14 +54,6 @@ public class ResourceServerConfig {
                                 // 请求中携带token访问时会触发该解析器适配器
                                 .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
                         )
-                /*
-                // xhr请求未携带Token处理
-                .authenticationEntryPoint(this::authenticationEntryPoint)
-                // 权限不足处理
-                .accessDeniedHandler(this::accessDeniedHandler)
-                // Token解析失败处理
-                .authenticationFailureHandler(this::failureHandler)
-                */
         );
 
         return http.build();

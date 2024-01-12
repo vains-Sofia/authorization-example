@@ -7,3 +7,14 @@ spring:
       - nacos:resource.yml?refresh=true
   application:
     name: resource
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"

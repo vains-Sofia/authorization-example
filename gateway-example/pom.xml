@@ -18,6 +18,7 @@
         <module>gateway-client-example</module>
         <module>normal-resource-example</module>
         <module>webflux-resource-example</module>
+        <module>monitor</module>
     </modules>
 
     <properties>
@@ -26,6 +27,8 @@
         <snakeyaml.version>2.0</snakeyaml.version>
         <!-- Spring Cloud版本号 -->
         <spring-cloud.version>2022.0.4</spring-cloud.version>
+        <!-- 服务监控 Spring Boot Admin -->
+        <spring-boot-admin.version>3.1.5</spring-boot-admin.version>
         <!-- Spring Cloud Alibaba版本号 -->
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
     </properties>
@@ -61,6 +64,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
+
+        <!-- spring-boot-actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -76,6 +85,14 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-dependencies</artifactId>
+                <version>${spring-boot-admin.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

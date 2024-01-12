@@ -38,6 +38,7 @@ public class ResourceServerConfig {
 
         // 开启全局验证
         http.authorizeExchange((authorize) -> authorize
+                .pathMatchers("/actuator/**").permitAll()
                 //全部需要认证
                 .anyExchange().authenticated()
         );
@@ -48,7 +49,7 @@ public class ResourceServerConfig {
                 .jwt(jwtSpec -> jwtSpec
                         // 设置jwt解析器适配器
                         .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
-                )
+        )
         );
         return http.build();
     }
