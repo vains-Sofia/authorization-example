@@ -271,7 +271,6 @@ public class SecurityUtils {
                             boolean absoluteUrl = UrlUtils.isAbsoluteUrl(customSecurityProperties.getConsentPageUri());
                             // 如果是分离页面则重定向，否则转发请求
                             authorizationEndpoint.consentPage(customSecurityProperties.getConsentPageUri());
-                            authorizationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : customSecurityProperties.getConsentPageUri());
                             if (absoluteUrl) {
                                 // 适配前后端分离的授权确认页面，成功/失败响应json
                                 authorizationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler(customSecurityProperties.getConsentPageUri()));
@@ -288,7 +287,7 @@ public class SecurityUtils {
                             // 校验授权确认页面是否为完整路径；是否是前后端分离的页面
                             boolean absoluteUrl = UrlUtils.isAbsoluteUrl(customSecurityProperties.getConsentPageUri());
                             // 如果是分离页面则重定向，否则转发请求
-                            deviceVerificationEndpoint.consentPage(customSecurityProperties.getConsentPageUri());
+                            deviceVerificationEndpoint.consentPage(absoluteUrl ? CUSTOM_CONSENT_REDIRECT_URI : customSecurityProperties.getConsentPageUri());
                             if (absoluteUrl) {
                                 // 适配前后端分离的授权确认页面，失败响应json
                                 deviceVerificationEndpoint.errorResponseHandler(new ConsentAuthenticationFailureHandler(customSecurityProperties.getConsentPageUri()));
