@@ -55,7 +55,7 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IQrCodeLoginServiceImpl implements IQrCodeLoginService {
+public class QrCodeLoginServiceImpl implements IQrCodeLoginService {
 
 	private final RedisOperator<QrCodeInfo> redisOperator;
 
