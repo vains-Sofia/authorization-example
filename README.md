@@ -22,15 +22,18 @@ Spring OAuth2 Authorization Server集成与拓展项目，包括认证服务搭�
 
 授权码扩展流程PKCE(Proof Key for Code Exchange)
 
+短信登录(自定义grant_type)
+
 设备码授权模式
 
+## 项目支持的登录方式
 短信验证码登录
-
-自定义grant_type
 
 授权码模式使用前后端分离的登录页面(现已支持spring session data redis，前后端不同域名的可以看看之前的nonceId的方案)
 
 联合身份认证(现已集成Github、Gitee登录和微信登录)
+
+二维码扫码登录
 
 ## 项目环境要求
 
@@ -54,6 +57,10 @@ authorization-example # 最外层目录
  │  
  ├─vue-login-page-example # 前后端登录中的前端模块
  │  
+ ├─both-jwt-and-opaque-token-resource-example # 兼容jwt和不透明令牌(opaque token)资源服务示例
+ │  
+ ├─opaque-token-resource-example # 不透明令牌(opaque token)资源服务示例
+ │  
  └─gateway-example # 网关集成OAuth2认证服务示例
      │  
      ├─gateway-client-example # 网关
@@ -67,56 +74,15 @@ authorization-example # 最外层目录
 
 ## 文章地址
 
-### 掘金
+### [掘金专栏](https://juejin.cn/column/7239953874950684732)
 
-**[Spring Authorization Server入门 (一) 初识SpringAuthorizationServer和OAuth2.1协议](https://juejin.cn/post/7239953874950733884)**<br>
-**[Spring Authorization Server入门 (二) springboot整合Spring Authorization Server](https://juejin.cn/post/7239953874950815804)**<br>
-**[Spring Authorization Server入门 (三) 集成流程说明、细节补充和各种方式获取token测试](https://juejin.cn/post/7241058098974720037)**<br>
-**[Spring Authorization Server入门 (四) 自定义设备码授权](https://juejin.cn/post/7241101553712283707)**<br>
-**[Spring Authorization Server入门 (五) 自定义异常响应配置](https://juejin.cn/post/7241439405970063416)**<br>
-**[Spring Authorization Server入门 (六) 自定义JWT中携带的claims与资源服务jwt解析器](https://juejin.cn/post/7241762957570097213)**<br>
-**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://juejin.cn/post/7242476048005709879)**<br>
-**[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://juejin.cn/spost/7243725197911834683)**<br>
-**[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://juejin.cn/spost/7244043482772029498)**<br>
-**[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://juejin.cn/post/7245538214114492474)**<br>
-**[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://juejin.cn/post/7246409673565372475)**<br>
-**[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://juejin.cn/post/7254096495184134181)**<br>
-**[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://juejin.cn/post/7258466145653096504)**<br>
-**[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://juejin.cn/post/7261098261142208568)**<br>
-**[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://juejin.cn/post/7262317630307205176)**<br>
-**[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://juejin.cn/spost/7271496874942890024)**<br>
-**[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://juejin.cn/post/7279052777888890921)**<br>
-**[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://juejin.cn/post/7279265985912225828)**<br>
-**[Spring Authorization Server入门 (十九) 基于Redis的Token、客户端信息和授权确认信息存储](https://juejin.cn/post/7294853623849254946)**<br>
-
-### CSDN
-
-**[Spring Authorization Server入门 (一) 初识SpringAuthorizationServer和OAuth2.1协议](https://blog.csdn.net/weixin_43356507/article/details/130991406)**<br>
-**[Spring Authorization Server入门 (二) springboot整合Spring Authorization Server](https://blog.csdn.net/weixin_43356507/article/details/131006763)**<br>
-**[Spring Authorization Server入门 (三) 集成流程说明、细节补充和各种方式获取token测试](https://blog.csdn.net/weixin_43356507/article/details/131023147)**<br>
-**[Spring Authorization Server入门 (四) 自定义设备码授权](https://blog.csdn.net/weixin_43356507/article/details/131050408)**<br>
-**[Spring Authorization Server入门 (五) 自定义异常响应配置](https://blog.csdn.net/weixin_43356507/article/details/131063392)**<br>
-**[Spring Authorization Server入门 (六) 自定义JWT中携带的claims与资源服务jwt解析器](https://blog.csdn.net/weixin_43356507/article/details/131081862)**<br>
-**[Spring Authorization Server入门 (七) 登录添加图形验证码](https://blog.csdn.net/weixin_43356507/article/details/131109818)**<br>
-**[Spring Authorization Server入门 (八) Spring Boot引入Security OAuth2 Client对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131173945)**<br>
-**[Spring Authorization Server入门 (九) Spring Boot引入Resource Server对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/131190785)**<br>
-**[Spring Authorization Server入门 (十) 添加短信验证码方式登录](https://blog.csdn.net/weixin_43356507/article/details/131262461)**<br>
-**[Spring Authorization Server入门 (十一) 自定义grant_type(短信认证登录)获取token](https://blog.csdn.net/weixin_43356507/article/details/131297456)**<br>
-**[Spring Authorization Server入门 (十二) 实现授权码模式使用前后端分离的登录页面](https://blog.csdn.net/weixin_43356507/article/details/131650660)**<br>
-**[Spring Authorization Server入门 (十三) 实现联合身份认证，集成Github与Gitee的OAuth登录](https://blog.csdn.net/weixin_43356507/article/details/131872353)**<br>
-**[Spring Authorization Server入门 (十四) 联合身份认证添加微信登录](https://blog.csdn.net/weixin_43356507/article/details/131998050)**<br>
-**[Spring Authorization Server入门 (十五) 分离授权确认与设备码校验页面](https://blog.csdn.net/weixin_43356507/article/details/132052355)**<br>
-**[Spring Authorization Server入门 (十六) Spring Cloud Gateway对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132517747)**<br>
-**[Spring Authorization Server入门 (十七) Vue项目使用授权码模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949746)**<br>
-**[Spring Authorization Server入门 (十八) Vue项目使用PKCE模式对接认证服务](https://blog.csdn.net/weixin_43356507/article/details/132949801)**<br>
-**[Spring Authorization Server入门 (十九) 基于Redis的Token、客户端信息和授权确认信息存储](https://blog.csdn.net/weixin_43356507/article/details/134098583)**<br>
+### [CSDN专栏](https://blog.csdn.net/weixin_43356507/category_12338180.html)
 
 ## 赞赏
 
 **如果各位觉得项目或文章还不错的，麻烦帮忙点个star，谢谢**<br />
 **也可以通过下方二维码进行赞赏，请作者喝一杯Coffee，非常感谢！**
 ![Reward](images/Reward.jpg)
-
 
 
 ## 感谢人列表
