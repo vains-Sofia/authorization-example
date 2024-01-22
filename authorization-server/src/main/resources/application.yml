@@ -97,7 +97,7 @@ custom:
     # 设备码验证成功页面
     device-activated-uri: http://k7fsqkhtbx.cdhttp.cn/activated
     # 不需要认证的地址
-    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico
+    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico, /qrCode/login/**
     # 当前认证服务访问的路径
     issuer-url: http://kwqqr48rgo.cdhttp.cn
 
