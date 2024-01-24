@@ -1,5 +1,6 @@
 package com.example.repository;
 
+import com.example.constant.SecurityConstants;
 import com.example.entity.security.RedisRegisteredClient;
 import com.example.service.impl.RedisOAuth2AuthorizationService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -227,6 +228,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+				.authorizationGrantType(new AuthorizationGrantType(SecurityConstants.GRANT_TYPE_SMS_CODE))
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://k7fsqkhtbx.cdhttp.cn/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
@@ -242,7 +244,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .tokenSettings(tokenSettingsBuilder.build())
                 .build();
 
-        // 正常授权码客户端
+        // 匿名令牌客户端
         RegisteredClient opaqueClient = RegisteredClient.withId("opaque-client")
                 // 客户端id
                 .clientId("opaque-client")
