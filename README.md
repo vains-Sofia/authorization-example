@@ -14,6 +14,10 @@ Spring OAuth2 Authorization Server集成与拓展项目，包括认证服务搭�
 ## 交流群
 [724141959](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=TJ6P1zOGofljK4xxnRrmn_3p42V995OD&authKey=h3YWSUIJXL23m34ATDfWlYa61UQRyBRxBpoMnDGoU%2BJKKfcHWGYMZC9bAJ%2FZ69Ax&noverify=0&group_code=724141959)
 
+## [项目本地开发调试配置说明](https://gitee.com/vains-Sofia/authorization-example/wikis/pages?sort_id=9430954&doc_id=4386245)
+
+## [认证服务和前端项目部署指南](https://gitee.com/vains-Sofia/authorization-example/wikis/pages?sort_id=8407202&doc_id=4386245)
+
 ## 项目支持的授权方式
 
 授权码模式
