@@ -19,7 +19,7 @@ public class CodeGeneratorTest {
     public static void main(String[] args) {
         FastAutoGenerator.create(DATA_SOURCE_CONFIG)
                 // 全局配置
-                .globalConfig((scanner, builder) -> builder.author(scanner.apply("请输入作者名称？")).fileOverride())
+                .globalConfig((scanner, builder) -> builder.author(scanner.apply("请输入作者名称？")))
                 // 包配置
                 .packageConfig((scanner, builder) -> builder.parent(scanner.apply("请输入包名？")))
                 // 策略配置
