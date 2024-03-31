@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@TableName("oauth2_third_Account")
+@TableName("oauth2_third_account")
 public class Oauth2ThirdAccount implements Serializable {
 
     @Serial
