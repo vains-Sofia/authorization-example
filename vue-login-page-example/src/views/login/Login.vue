@@ -18,8 +18,8 @@ const loading = ref(false)
 // 定义登录提交的对象
 const loginModel = ref({
   code: '',
-  username: '',
-  password: '',
+  username: 'admin',
+  password: '123456',
   loginType: '',
   captchaId: ''
 })
@@ -143,6 +143,15 @@ const handleUpdateValue = (name: string) => {
     refreshQrCode()
   } else {
     getCaptcha()
+    // 切换账号登录或短信认证登录时填充默认的手机号/账号
+    if (name === 'signup') {
+      // 短信认证登录时
+      loginModel.value.username = '17683906001'
+      loginModel.value.password = ''
+    } else {
+      loginModel.value.username = 'admin'
+      loginModel.value.password = '123456'
+    }
   }
 }
 
