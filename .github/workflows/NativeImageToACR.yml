@@ -12,10 +12,11 @@ on:
 env:
   # 仓库地址
   REGISTRY: registry.cn-guangzhou.aliyuncs.com
-  IMAGE_NAME: vains/authorization-example
+  IMAGE_NAME: authorization-server
   IMAGE_TAG: latest
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
+  RUN_NUMBER: ${{ github.run_number }}
 
 jobs:
   build:
@@ -70,12 +71,12 @@ jobs:
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
         run:
-          cd authorization-server && mvn -DskipTests -Pnative spring-boot:build-image --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
+          cd authorization-server && mvn -DskipTests -Pnative spring-boot:build-image
 
       # 推送镜像到镜像仓库
       - name: Push to ACR
         run:
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
+          docker push authorization-server:0.0.1-SNAPSHOT
 
       # 列出所有镜像
       - name: Docker Images Lst
