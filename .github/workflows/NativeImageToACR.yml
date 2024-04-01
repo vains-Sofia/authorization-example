@@ -16,7 +16,7 @@ env:
   IMAGE_TAG: latest
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
-  DEFAULT_IMAGE_NAME: docker.io/library/authorization-server:0.0.1-SNAPSHOT
+  DEFAULT_IMAGE_NAME: authorization-server:0.0.1-SNAPSHOT
 
 jobs:
   build:
