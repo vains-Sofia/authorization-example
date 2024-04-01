@@ -29,9 +29,9 @@ import org.springframework.web.filter.CorsFilter;
  *
  * @author vains
  */
-@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class ResourceConfig {
 

@@ -21,8 +21,8 @@ import org.springframework.security.jackson2.CoreJackson2Module;
  *
  * @author vains
  */
-@Configuration
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class RedisConfig {
 

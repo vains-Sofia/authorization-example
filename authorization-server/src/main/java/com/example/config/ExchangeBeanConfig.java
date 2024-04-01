@@ -15,8 +15,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
  *
  * @author vains
  */
-@Configuration
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 public class ExchangeBeanConfig {
 
     private final CustomSecurityProperties securityProperties;

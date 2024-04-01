@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author vains
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ClientServerConfig {
 
     /**

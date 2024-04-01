@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
  *
  * @author vains
  */
-@Configuration
-@MapperScan("com.example.mapper")
+@Configuration(proxyBeanMethods = false)
+@MapperScan(basePackages = "com.example.mapper", sqlSessionTemplateRef = "sqlSessionTemplate")
 public class MybatisPlusConfig {
 
     /**

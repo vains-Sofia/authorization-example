@@ -13,8 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * @author vains
  */
-@Configuration
 @EnableWebSecurity
+@Configuration(proxyBeanMethods = false)
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class ResourceServerConfig {
 

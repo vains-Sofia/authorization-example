@@ -14,7 +14,7 @@ import static com.example.property.CustomSecurityProperties.PREFIX;
  * @author vains
  */
 @Data
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConfigurationProperties(prefix = PREFIX)
 public class CustomSecurityProperties {
 

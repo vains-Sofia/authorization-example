@@ -12,8 +12,8 @@ import org.springframework.web.filter.CorsFilter;
  *
  * @author vains
  */
-@Configuration
 @EnableConfigurationProperties
+@Configuration(proxyBeanMethods = false)
 public class BeanConfig {
 
     /**

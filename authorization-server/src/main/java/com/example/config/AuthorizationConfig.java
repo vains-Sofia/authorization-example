@@ -49,8 +49,8 @@ import java.util.UUID;
  *
  * @author vains
  */
-@Configuration
 @RequiredArgsConstructor
+@Configuration(proxyBeanMethods = false)
 public class AuthorizationConfig {
 
     private final CorsFilter corsFilter;

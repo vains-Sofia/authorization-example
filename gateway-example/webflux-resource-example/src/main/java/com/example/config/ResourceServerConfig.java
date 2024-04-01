@@ -19,9 +19,9 @@ import reactor.core.publisher.Mono;
  *
  * @author vains
  */
-@Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@Configuration(proxyBeanMethods = false)
 public class ResourceServerConfig {
 
     /**
