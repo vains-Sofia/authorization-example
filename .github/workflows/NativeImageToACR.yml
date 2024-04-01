@@ -12,11 +12,11 @@ on:
 env:
   # 仓库地址
   REGISTRY: registry.cn-guangzhou.aliyuncs.com
-  IMAGE_NAME: authorization-server
+  IMAGE_NAME: vains/authorization-server
   IMAGE_TAG: latest
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
-  RUN_NUMBER: ${{ github.run_number }}
+  DEFAULT_IMAGE_NAME: docker.io/library/authorization-server:0.0.1-SNAPSHOT
 
 jobs:
   build:
@@ -58,6 +58,12 @@ jobs:
       #     tags: ${{env.IMAGE_NAME}}:${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }} #动态变量镜像TAG 使用github运行job和jobid设置tag
       #     context: . # 相对以远程仓库根路径的dockerfile的路径
       #     file: ./NetByDocker/Dockerfile # 指定Dockerfile
+
+      # 登录阿里云镜像仓库
+      - name: Login Alibaba ACR
+        run:
+          echo "${{ env.PASSWORD }}" | docker login --username=${{ env.USERNAME }} --password-stdin ${{ env.REGISTRY }}
+
       - name: Set Jdk21
         uses: actions/setup-java@v4
         with:
@@ -69,20 +75,18 @@ jobs:
         run:
           java -version
 
-      # 登录阿里云镜像仓库
-      - name: Login Alibaba ACR
-        run:
-          echo "${{ env.PASSWORD }}" | docker login --username=${{ env.USERNAME }} --password-stdin ${{ env.REGISTRY }}
-
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
         run:
           cd authorization-server && mvn -DskipTests -Pnative spring-boot:build-image
 
-      # 推送镜像到镜像仓库
+      # 使用"docker tag"命令重命名镜像，并将它通过专有网络地址推送至Registry。
       - name: Push to ACR
         run:
-          docker push authorization-server:0.0.1-SNAPSHOT
+          docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} \
+          && docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }} \
+          && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} \
+          && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
 
       # 列出所有镜像
       - name: Docker Images Lst
