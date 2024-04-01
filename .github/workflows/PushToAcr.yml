@@ -1,14 +1,16 @@
 # 工作流名称
 name: Package Docker Image and push to alibab ACR
- 
-# 手动触发任务
+
 on:
+  # master分支提交时
   push:
     branches:
-      - main
+      - master
+  # master分支PR时
   pull_request:
     branches:
-      - main
+      - master
+  # 手动触发任务
   workflow_dispatch:
  
 env:
