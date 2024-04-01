@@ -2,10 +2,6 @@
 name: Package Docker Image and push to alibab ACR
 
 on:
-  # master分支提交时
-  push:
-    branches:
-      - master
   # master分支PR时
   pull_request:
     branches:
