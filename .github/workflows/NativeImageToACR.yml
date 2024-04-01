@@ -83,10 +83,7 @@ jobs:
       # 使用"docker tag"命令重命名镜像，并将它通过专有网络地址推送至Registry。
       - name: Push to ACR
         run:
-          docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} \
-          && docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }} \
-          && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} \
-          && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
+          docker images && docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker tag ${{ env.DEFAULT_IMAGE_NAME }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
 
       # 列出所有镜像
       - name: Docker Images Lst
