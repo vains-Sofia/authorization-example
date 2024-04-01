@@ -14,7 +14,7 @@
     <name>authorization-server</name>
     <description>authorization-server</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <!-- hutool工具包 -->
         <hutool.version>5.8.18</hutool.version>
         <!-- velocity模板引擎 -->
@@ -23,7 +23,7 @@
         <snakeyaml.version>2.0</snakeyaml.version>
         <!-- Mybatis Plus版本号 -->
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
-        <!-- Mybatis Plus版本号 -->
+        <!-- BootStrap版本号 -->
         <webjars.bootstrap.version>5.2.3</webjars.bootstrap.version>
     </properties>
     <dependencies>
@@ -159,6 +159,14 @@
                         <buildArg>--features=com.example.config.natives.LambdaRegistrationFeature</buildArg>
                         <buildArg>--initialize-at-run-time=sun.net.dns.ResolverConfigurationImpl</buildArg>
                     </buildArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- 在进行AOT编译时跳过测试 -->
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
