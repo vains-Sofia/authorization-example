@@ -2,7 +2,14 @@
 name: Package Docker Image and push to alibab ACR
  
 # 手动触发任务
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
  
 env:
   # 仓库地址
@@ -65,12 +72,12 @@ jobs:
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image
         run:
-          cd authorization-server && docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          cd authorization-server && docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
 
       # 推送镜像到镜像仓库
       - name: Push to ACR
         run:
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
  
       # 列出所有镜像    
       - name: Docker Images Lst 
