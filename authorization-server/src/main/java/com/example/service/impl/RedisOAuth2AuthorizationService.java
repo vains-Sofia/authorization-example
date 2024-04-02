@@ -61,8 +61,8 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         existingAuthorization.map(RedisOAuth2Authorization::getId)
                 .ifPresent(oAuth2AuthorizationRepository::deleteById);
 
-        // 过期时间，默认永不过期
-        long maxTimeout = -1L;
+        // 过期时间，默认30分钟过期
+        long maxTimeout = 30L;
         // 所有code的过期时间，方便计算最大值
         List<Instant> expiresAtList = new ArrayList<>();
 

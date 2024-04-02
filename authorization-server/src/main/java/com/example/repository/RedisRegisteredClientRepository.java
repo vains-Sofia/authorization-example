@@ -151,6 +151,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
             JavaType javaType = MAPPER.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
             return MAPPER.readValue(data, javaType);
         } catch (Exception ex) {
+            log.info("转换失败的JSON为：{}", data);
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
     }
