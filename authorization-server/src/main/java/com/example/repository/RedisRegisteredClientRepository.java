@@ -3,7 +3,7 @@ package com.example.repository;
 import com.example.constant.SecurityConstants;
 import com.example.entity.security.RedisRegisteredClient;
 import com.example.service.impl.RedisOAuth2AuthorizationService;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -148,8 +148,8 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
 
     private Map<String, Object> parseMap(String data) {
         try {
-            return MAPPER.readValue(data, new TypeReference<>() {
-            });
+            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+            return MAPPER.readValue(data, javaType);
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
