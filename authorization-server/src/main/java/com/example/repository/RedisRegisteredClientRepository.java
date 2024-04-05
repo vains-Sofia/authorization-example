@@ -1,11 +1,12 @@
 package com.example.repository;
 
+import com.example.authorization.serializer.OAuth2TokenFormatSerializer;
 import com.example.constant.SecurityConstants;
 import com.example.entity.security.RedisRegisteredClient;
-import com.example.service.impl.RedisOAuth2AuthorizationService;
-import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,12 +53,16 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
 
     static {
         // 初始化序列化配置
-        ClassLoader classLoader = RedisOAuth2AuthorizationService.class.getClassLoader();
+        ClassLoader classLoader = RedisRegisteredClientRepository.class.getClassLoader();
         // 加载security提供的Modules
         List<Module> modules = SecurityJackson2Modules.getModules(classLoader);
         MAPPER.registerModules(modules);
         // 加载Authorization Server提供的Module
         MAPPER.registerModule(new OAuth2AuthorizationServerJackson2Module());
+        // 将OAuth2TokenFormat序列化为字符串，防止本机镜像打包后反序列化失败
+        SimpleModule module = new SimpleModule("OAuth2TokenFormatSerializer");
+        module.addSerializer(OAuth2TokenFormat.class, new OAuth2TokenFormatSerializer());
+        MAPPER.registerModule(module);
     }
 
     @Override
@@ -148,8 +153,8 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
 
     private Map<String, Object> parseMap(String data) {
         try {
-            JavaType javaType = MAPPER.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
-            return MAPPER.readValue(data, javaType);
+            return MAPPER.readValue(data, new TypeReference<>() {
+            });
         } catch (Exception ex) {
             log.info("转换失败的JSON为：{}", data);
             throw new IllegalArgumentException(ex.getMessage(), ex);

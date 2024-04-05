@@ -16,7 +16,7 @@
     <properties>
         <java.version>21</java.version>
         <!-- hutool工具包 -->
-        <hutool.version>5.8.18</hutool.version>
+        <hutool.version>5.8.25</hutool.version>
         <!-- velocity模板引擎 -->
         <velocity.version>2.3</velocity.version>
         <!-- 修复漏洞 -->
@@ -167,6 +167,15 @@
                 <!-- 在进行AOT编译时跳过测试 -->
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
