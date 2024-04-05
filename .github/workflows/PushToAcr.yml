@@ -31,7 +31,7 @@ jobs:
     steps:
       # 将远程仓库中的源代码领取到workfile自动化构建脚本运行的服务器
       - name: Checkout repository
-        uses: actions/checkout@v3 
+        uses: actions/checkout@v4
  
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -66,6 +66,13 @@ jobs:
       - name: Login Alibaba ACR
         run:
           echo "${{ env.PASSWORD }}" | docker login --username=${{ env.USERNAME }} --password-stdin ${{ env.REGISTRY }}
+
+      - name: Set Jdk21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+          cache: 'maven'
 
       # 使用Dockerfile构建镜像  ${{env.IMAGE_TAG}}.${{ github.run_id }}.${{ github.run_number }}
       - name: Build the Docker image

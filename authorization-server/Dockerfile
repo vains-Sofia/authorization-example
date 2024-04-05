@@ -1,4 +1,4 @@
-FROM maven:3.8.3-openjdk-17-slim AS build
+FROM maven:3.9-ibm-semeru-21-jammy AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
