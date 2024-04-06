@@ -1,5 +1,7 @@
 package com.example.service.impl;
 
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.example.entity.Oauth2BasicUser;
 import com.example.model.qrcode.QrCodeInfo;
@@ -81,6 +83,8 @@ public class QrCodeLoginServiceImpl implements IQrCodeLoginService {
     public QrCodeGenerateResponse generateQrCode() {
 		// 生成二维码唯一id
 		String qrCodeId = IdWorker.getIdStr();
+		// 生成二维码并转为base64
+		String pngQrCode = QrCodeUtil.generateAsBase64(qrCodeId, new QrConfig(), "png");
 		QrCodeInfo info = QrCodeInfo.builder()
                 .qrCodeId(qrCodeId)
                 // 待扫描状态
@@ -118,7 +122,7 @@ public class QrCodeLoginServiceImpl implements IQrCodeLoginService {
 
 		// 因为上边设置的过期时间是2分钟，这里设置10分钟过期，可根据业务自行调整过期时间
 		redisOperator.set(QR_CODE_PREV + qrCodeId, info, QR_CODE_INFO_TIMEOUT);
-		return new QrCodeGenerateResponse(qrCodeId, (null));
+		return new QrCodeGenerateResponse(qrCodeId, pngQrCode);
 	}
 
 	@Override
@@ -187,7 +191,7 @@ public class QrCodeLoginServiceImpl implements IQrCodeLoginService {
 
 		// 校验二维码状态
 		QrCodeInfo info = redisOperator.get(QR_CODE_PREV + loginConsent.getQrCodeId());
-		if (info == null || info.getExpiresTime().isBefore(LocalDateTime.now())) {
+		if (info == null) {
 			throw new RuntimeException("无效二维码或二维码已过期.");
 		}
 

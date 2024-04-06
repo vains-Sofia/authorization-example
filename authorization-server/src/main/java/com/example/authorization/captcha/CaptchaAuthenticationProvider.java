@@ -60,9 +60,8 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
 
         // 获取当前登录方式
         String loginType = request.getParameter(SecurityConstants.LOGIN_TYPE_NAME);
-        if (!Objects.equals(loginType, SecurityConstants.PASSWORD_LOGIN_TYPE)
-            && !ObjectUtils.isEmpty(loginType)) {
-            // 只要不是密码登录都不需要校验图形验证码，loginType为空的情况下需要验证验证码
+        if (!Objects.equals(loginType, SecurityConstants.PASSWORD_LOGIN_TYPE)) {
+            // 只要不是密码登录都不需要校验图形验证码
             log.info("It isn't necessary captcha authenticate.");
             return super.authenticate(authentication);
         }
