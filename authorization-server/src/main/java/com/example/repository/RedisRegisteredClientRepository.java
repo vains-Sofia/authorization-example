@@ -1,12 +1,10 @@
 package com.example.repository;
 
-import com.example.authorization.serializer.OAuth2TokenFormatSerializer;
 import com.example.constant.SecurityConstants;
 import com.example.entity.security.RedisRegisteredClient;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +58,9 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
         // 加载Authorization Server提供的Module
         MAPPER.registerModule(new OAuth2AuthorizationServerJackson2Module());
         // 将OAuth2TokenFormat序列化为字符串，防止本机镜像打包后反序列化失败
-        SimpleModule module = new SimpleModule("OAuth2TokenFormatSerializer");
+        /*SimpleModule module = new SimpleModule("OAuth2TokenFormatSerializer");
         module.addSerializer(OAuth2TokenFormat.class, new OAuth2TokenFormatSerializer());
-        MAPPER.registerModule(module);
+        MAPPER.registerModule(module);*/
     }
 
     @Override
