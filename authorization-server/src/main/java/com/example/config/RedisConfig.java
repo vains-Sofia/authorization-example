@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +42,8 @@ public class RedisConfig {
 
         // 创建ObjectMapper并添加默认配置
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
+
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         // 序列化所有字段
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
