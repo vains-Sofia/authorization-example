@@ -11,14 +11,6 @@
     ]
   },
   {
-    "name": "com.example.model.qrcode.QrCodeInfo",
-    "allDeclaredFields": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredClasses": true
-  },
-  {
     "name": "java.lang.Boolean",
     "methods": [
       {

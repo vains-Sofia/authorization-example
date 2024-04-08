@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -53,6 +54,9 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@RegisterReflectionForBinding({
+		QrCodeInfo.class
+})
 public class QrCodeLoginServiceImpl implements IQrCodeLoginService {
 
 	private final RedisOperator<QrCodeInfo> redisOperator;
