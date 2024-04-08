@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -38,6 +39,9 @@ import java.util.Set;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
+@RegisterReflectionForBinding({
+        OAuth2TokenFormat.class
+})
 public class RedisRegisteredClientRepository implements RegisteredClientRepository {
 
     /**
