@@ -7,11 +7,12 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
-import org.springframework.security.oauth2.client.jackson2.OAuth2ClientJackson2Module;
 import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
@@ -40,6 +41,9 @@ import java.util.function.Consumer;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@RegisterReflectionForBinding({
+        OAuth2AuthorizationRequest.class
+})
 public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
     private final RegisteredClientRepository registeredClientRepository;
@@ -58,10 +62,7 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         MAPPER.registerModule(new CoreJackson2Module());
         // 加载Authorization Server提供的Module
         MAPPER.registerModule(new OAuth2AuthorizationServerJackson2Module());
-        // 添加Security web提供的Module
         MAPPER.registerModule(new WebServletJackson2Module());
-        // 添加OAuth2 Client提供的Module
-        MAPPER.registerModule(new OAuth2ClientJackson2Module());
     }
 
     @Override
