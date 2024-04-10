@@ -83,6 +83,45 @@
     },
     {
       "name":"java.util.ImmutableCollections$Set12"
+    },
+    {
+      "name":"com.example.model.security.BasicOAuth2User"
+    },
+    {
+      "name":"org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest"
+    },
+    {
+      "name":"org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponseType"
+    },
+    {
+      "name":"org.springframework.security.oauth2.core.user.OAuth2UserAuthority"
+    },
+    {
+      "name":"org.springframework.security.web.savedrequest.SavedCookie"
+    },
+    {
+      "name":"java.util.Collections$UnmodifiableMap"
+    },
+    {
+      "name":"java.util.Collections$UnmodifiableSet"
+    },
+    {
+      "name":"java.util.HashMap"
+    },
+    {
+      "name":"java.util.LinkedHashMap"
+    },
+    {
+      "name":"java.util.LinkedHashSet"
+    },
+    {
+      "name":"org.springframework.security.core.authority.SimpleGrantedAuthority"
+    },
+    {
+      "name":"org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken"
+    },
+    {
+      "name":"org.springframework.security.oauth2.core.AuthorizationGrantType"
     }
   ],
   "lambdaCapturingTypes":[
