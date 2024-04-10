@@ -148,9 +148,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <docker>
-                        <host>tcp://192.168.190.129:2375</host>
-                    </docker>
                 </configuration>
             </plugin>
             <plugin>
