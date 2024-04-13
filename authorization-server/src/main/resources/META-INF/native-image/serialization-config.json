@@ -137,6 +137,9 @@
     },
     {
       "name":"org.springframework.dao.DataIntegrityViolationException"
+    },
+    {
+      "name":"org.springframework.web.client.RestClientException"
     }
   ],
   "lambdaCapturingTypes":[
