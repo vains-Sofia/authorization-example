@@ -140,6 +140,9 @@
     },
     {
       "name":"org.springframework.web.client.RestClientException"
+    },
+    {
+      "name":"org.springframework.web.client.ResourceAccessException"
     }
   ],
   "lambdaCapturingTypes":[

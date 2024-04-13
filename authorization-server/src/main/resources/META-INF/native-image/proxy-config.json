@@ -26,5 +26,8 @@
       "org.springframework.core.SerializableTypeWrapper$SerializableTypeProxy",
       "java.io.Serializable"
     ]
+  },
+  {
+    "interfaces":["org.springframework.data.redis.core.RedisHash"]
   }
 ]
