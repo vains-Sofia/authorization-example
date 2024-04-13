@@ -155,6 +155,15 @@
     },
     {
       "name":"java.sql.SQLException"
+    },
+    {
+      "name":"java.sql.SQLWarning"
+    },
+    {
+      "name":"java.sql.DataTruncation"
+    },
+    {
+      "name":"com.mysql.cj.jdbc.exceptions.MysqlDataTruncation"
     }
   ],
   "lambdaCapturingTypes":[
