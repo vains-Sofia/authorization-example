@@ -143,6 +143,15 @@
     },
     {
       "name":"org.springframework.web.client.ResourceAccessException"
+    },
+    {
+      "name":"java.io.IOException"
+    },
+    {
+      "name":"java.lang.Exception"
+    },
+    {
+      "name":"java.lang.Throwable"
     }
   ],
   "lambdaCapturingTypes":[
