@@ -134,6 +134,9 @@
     },
     {
       "name":"org.springframework.dao.NonTransientDataAccessException"
+    },
+    {
+      "name":"org.springframework.dao.DataIntegrityViolationException"
     }
   ],
   "lambdaCapturingTypes":[
