@@ -122,6 +122,9 @@
     },
     {
       "name":"org.springframework.security.oauth2.core.AuthorizationGrantType"
+    },
+    {
+      "name":"org.springframework.security.oauth2.core.OAuth2AuthorizationException"
     }
   ],
   "lambdaCapturingTypes":[
