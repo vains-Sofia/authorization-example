@@ -125,6 +125,9 @@
     },
     {
       "name":"org.springframework.security.oauth2.core.OAuth2AuthorizationException"
+    },
+    {
+      "name":"org.springframework.core.NestedRuntimeException"
     }
   ],
   "lambdaCapturingTypes":[
