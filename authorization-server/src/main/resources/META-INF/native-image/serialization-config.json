@@ -128,6 +128,9 @@
     },
     {
       "name":"org.springframework.core.NestedRuntimeException"
+    },
+    {
+      "name":"org.springframework.dao.DataAccessException"
     }
   ],
   "lambdaCapturingTypes":[
