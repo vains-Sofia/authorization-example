@@ -1,0 +1,10 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\Qorg/springframework/jdbc/support/sql-error-codes.xml\\E"
+      }
+    ]
+  },
+  "bundles": []
+}
