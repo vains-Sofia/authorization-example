@@ -83,7 +83,10 @@ jobs:
       - name: Push to ACR
         run:
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.IMAGE_TAG}} && docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.1.${{ github.run_number }}
- 
+
+      - name: Refresh docker process
+        run: curl -u basic:${{ secrets.BASIC_PASSWORD }} http://k7fsqkhtbx.cdhttp.cn/shell-executor/docker/refreshProcess
+
       # 列出所有镜像    
       - name: Docker Images Lst 
         run: docker images
