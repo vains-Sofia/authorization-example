@@ -33,6 +33,7 @@ public class BeanConfig {
         configuration.addAllowedOrigin("http://192.168.119.1:5173");
         configuration.addAllowedOrigin("http://k7fsqkhtbx.cdhttp.cn");
         configuration.addAllowedOrigin("https://vains-sofia.gitee.io");
+        configuration.addAllowedOrigin("https://flow-cloud.love");
         // 设置跨域访问可以携带cookie
         configuration.setAllowCredentials(true);
         // 允许所有的请求方法 ==> GET POST PUT Delete
