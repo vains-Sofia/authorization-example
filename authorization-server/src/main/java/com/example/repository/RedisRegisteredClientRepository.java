@@ -235,7 +235,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .authorizationGrantType(new AuthorizationGrantType(SecurityConstants.GRANT_TYPE_SMS_CODE))
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
-                .redirectUri("http://k7fsqkhtbx.cdhttp.cn/OAuth2Redirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
@@ -267,6 +267,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
@@ -306,7 +307,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://127.0.0.1:5173/PkceRedirect")
-                .redirectUri("http://k7fsqkhtbx.cdhttp.cn/PkceRedirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
                 .redirectUri("https://flow-cloud.love/PkceRedirect")
                 // 开启 PKCE 流程
                 .clientSettings(builder.requireProofKey(Boolean.TRUE).build())
