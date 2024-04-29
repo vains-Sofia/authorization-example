@@ -107,8 +107,10 @@ server:
       cookie:
         domain: 51xd.pub
 
-  # 针对哲西信科https内网穿透配置
   tomcat:
     remoteip:
-      protocol-header: Upgrade-Insecure-Requests
-      protocol-header-https-value: 1
+      # protocol-header: Upgrade-Insecure-Requests
+      # protocol-header-https-value: 1
+      # 针对哲西信科https内网穿透的特殊配置
+      protocol-header: host
+      protocol-header-https-value: p64gf7d1bc.51xd.pub
