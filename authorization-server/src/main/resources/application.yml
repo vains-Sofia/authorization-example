@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/authorization-example?serverTimezone=Asia/Shanghai&userUnicode=true&characterEncoding=utf-8&ssl-mode=REQUIRED
+    url: jdbc:mysql://${DB_HOST:192.168.187.128}:${DB_PORT:3306}/authorization-example?serverTimezone=Asia/Shanghai&userUnicode=true&characterEncoding=utf-8&ssl-mode=REQUIRED
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:root}
   security:
@@ -77,7 +77,7 @@ spring:
     default-property-inclusion: non_null
   data:
     redis:
-      url: ${REDIS_URL:redis://127.0.0.1:6379}
+      url: ${REDIS_URL:redis://192.168.187.128:6379}
 
 # Mybatis-Plus 配置
 mybatis-plus:
@@ -89,20 +89,26 @@ custom:
   # 自定义认证配置
   security:
     # 登录页面路径
-    login-url: http://k7fsqkhtbx.cdhttp.cn/login
+    login-url: https://j1zr8ren8w.51xd.pub/login
     # 授权确认页面路径
-    consent-page-uri: http://k7fsqkhtbx.cdhttp.cn/consent
+    consent-page-uri: https://j1zr8ren8w.51xd.pub/consent
     # 设备码验证页面
-    device-activate-uri: http://k7fsqkhtbx.cdhttp.cn/activate
+    device-activate-uri: https://j1zr8ren8w.51xd.pub/activate
     # 设备码验证成功页面
-    device-activated-uri: http://k7fsqkhtbx.cdhttp.cn/activated
+    device-activated-uri: https://j1zr8ren8w.51xd.pub/activated
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico, /qrCode/login/**
     # 当前认证服务访问的路径
-    issuer-url: http://kwqqr48rgo.cdhttp.cn
+    issuer-url: https://p64gf7d1bc.51xd.pub
 
 server:
   servlet:
     session:
       cookie:
-        domain: cdhttp.cn
+        domain: 51xd.pub
+
+  # 针对哲西信科https内网穿透配置
+  tomcat:
+    remoteip:
+      protocol-header: Upgrade-Insecure-Requests
+      protocol-header-https-value: 1
