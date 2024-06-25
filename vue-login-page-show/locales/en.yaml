@@ -1,0 +1,68 @@
+buttons:
+  pureLoginOut: LoginOut
+  pureLogin: Login
+  pureSystemSet: Open ProjectConfig
+  pureReload: Reload
+  pureCloseCurrentTab: Close CurrentTab
+  pureCloseLeftTabs: Close LeftTabs
+  pureCloseRightTabs: Close RightTabs
+  pureCloseOtherTabs: Close OtherTabs
+  pureCloseAllTabs: Close AllTabs
+  pureContentFullScreen: Content FullScreen
+  pureContentExitFullScreen: Content ExitFullScreen
+menus:
+  pureHome: Home
+  pureLogin: Login
+  pureAbnormal: Abnormal Page
+  pureFourZeroFour: "404"
+  pureFourZeroOne: "403"
+  pureFive: "500"
+  purePermission: Permission Manage
+  purePermissionPage: Page Permission
+  purePermissionButton: Button Permission
+  consent: Authorize Consent
+status:
+  pureLoad: Loading...
+login:
+  pureUsername: Username
+  purePassword: Password
+  pureVerifyCode: VerifyCode
+  pureRemember: days no need to login
+  pureRememberInfo: After checking and logging in, will automatically log in to the system without entering your username and password within the specified number of days.
+  pureSure: Sure Password
+  pureForget: Forget Password?
+  pureLogin: Login
+  pureThirdLogin: Third Login
+  purePhoneLogin: Phone Login
+  pureQRCodeLogin: QRCode Login
+  pureRegister: Register
+  pureWeChatLogin: WeChat Login
+  pureAlipayLogin: Alipay Login
+  pureGithubLogin: Github Login
+  pureGiteeLogin: Gitee Login
+  pureQQLogin: QQ Login
+  pureWeiBoLogin: Weibo Login
+  purePhone: Phone
+  pureSmsVerifyCode: SMS VerifyCode
+  pureBack: Back
+  pureTest: Mock Test
+  pureTip: After scanning the code, click "Confirm" to complete the login
+  pureDefinite: Definite
+  pureLoginSuccess: Login Success
+  pureRegisterSuccess: Regist Success
+  pureTickPrivacy: Please tick Privacy Policy
+  pureReadAccept: I have read it carefully and accept
+  purePrivacyPolicy: Privacy Policy
+  pureGetVerifyCode: Get VerifyCode
+  pureInfo: Seconds
+  pureUsernameReg: Please enter username
+  purePassWordReg: Please enter password
+  pureVerifyCodeReg: Please enter verify code
+  pureVerifyCodeCorrectReg: Please enter correct verify code
+  pureVerifyCodeSixReg: Please enter a 6-digit verify code
+  purePhoneReg: Please enter the phone
+  purePhoneCorrectReg: Please enter the correct phone number format
+  purePassWordRuleReg: The password format should be any combination of 8-18 digits
+  purePassWordSureReg: Please enter confirm password
+  purePassWordDifferentReg: The two passwords do not match!
+  purePassWordUpdateReg: Password has been updated
