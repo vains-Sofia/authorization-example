@@ -105,8 +105,10 @@ server:
   servlet:
     session:
       cookie:
+        # 本地调试时改为127.0.0.1，然后前端、后端使用127.0.0.1访问
         domain: 51xd.pub
 
+  # 本地开发时移除下边配置
   tomcat:
     remoteip:
       # protocol-header: Upgrade-Insecure-Requests
