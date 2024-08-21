@@ -10,7 +10,14 @@ spring:
           # 认证提供者,自定义名称
           custom-issuer:
             # Token签发地址(认证服务地址)
-            issuer-uri: http://192.168.120.33:8080
+            issuer-uri: http://192.168.31.147:8080
+            # 获取用户信息的地址，默认的/userinfo端点需要IdToken获取，为避免麻烦自定一个用户信息接口
+            user-info-uri: ${spring.security.oauth2.client.provider.custom-issuer.issuer-uri}/user
+            user-name-attribute: sub
+          # 认证提供者,自定义名称
+          private-key-issuer:
+            # Token签发地址(认证服务地址)
+            issuer-uri: http://192.168.31.147:8080
             # 获取用户信息的地址，默认的/userinfo端点需要IdToken获取，为避免麻烦自定一个用户信息接口
             user-info-uri: ${spring.security.oauth2.client.provider.custom-issuer.issuer-uri}/user
             user-name-attribute: sub
@@ -33,5 +40,23 @@ spring:
             scope:
               - message.read
               - message.write
+              - openid
+              - profile
+          private-key-client-oidc:
+            # oauth认证提供者配置，和上边配置的认证提供者关联起来
+            provider: private-key-issuer
+            # 客户端名称，自定义
+            client-name: private-key-client
+            # 客户端id，从认证服务申请的客户端id
+            client-id: private-key-jwt-client
+            # 客户端秘钥
+            client-secret: 12345678
+            # 客户端认证方式
+            client-authentication-method: private_key_jwt
+            # 获取Token使用的授权流程
+            authorization-grant-type: authorization_code
+            # 回调地址，这里设置为Spring Security Client默认实现使用code换取token的接口
+            redirect-uri: http://127.0.0.1:8000/login/oauth2/code/private-key-client-oidc
+            scope:
               - openid
               - profile

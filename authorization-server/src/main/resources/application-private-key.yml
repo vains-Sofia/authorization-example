@@ -1,4 +1,3 @@
-# 使用其它环境时请清空该配置文件
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -90,30 +89,22 @@ custom:
   # 自定义认证配置
   security:
     # 登录页面路径
-    login-url: https://j1zr8ren8w.51xd.pub/login
+    #login-url: https://j1zr8ren8w.51xd.pub/login
     # 授权确认页面路径
-    consent-page-uri: https://j1zr8ren8w.51xd.pub/consent
+    #consent-page-uri: https://j1zr8ren8w.51xd.pub/consent
     # 设备码验证页面
-    device-activate-uri: https://j1zr8ren8w.51xd.pub/activate
+    #device-activate-uri: https://j1zr8ren8w.51xd.pub/activate
     # 设备码验证成功页面
-    device-activated-uri: https://j1zr8ren8w.51xd.pub/activated
+    #device-activated-uri: https://j1zr8ren8w.51xd.pub/activated
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico, /qrCode/login/**
     # 当前认证服务访问的路径
-    issuer-url: https://p64gf7d1bc.51xd.pub
+    issuer-url: http://192.168.31.147:8080
 
 server:
   servlet:
     session:
       cookie:
         # 本地调试时改为127.0.0.1，然后前端、后端使用127.0.0.1访问
-        domain: 51xd.pub
+        domain: 192.168.31.147
 
-  # 本地开发时移除下边配置
-  tomcat:
-    remoteip:
-      # protocol-header: Upgrade-Insecure-Requests
-      # protocol-header-https-value: 1
-      # 针对哲西信科https内网穿透的特殊配置
-      protocol-header: host
-      protocol-header-https-value: p64gf7d1bc.51xd.pub

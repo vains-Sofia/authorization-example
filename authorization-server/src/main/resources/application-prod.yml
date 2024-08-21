@@ -1,4 +1,3 @@
-# 使用其它环境时请清空该配置文件
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

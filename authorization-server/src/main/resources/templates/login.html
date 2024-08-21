@@ -169,7 +169,9 @@ Invalid username or password.
                 if (r) {
                     let result = JSON.parse(r);
                     document.getElementById('captchaId').value = result.data.captchaId
-                    document.getElementById('code-image').src = result.data.imageData
+                    if (result.data.imageData) {
+                        document.getElementById('code-image').src = result.data.imageData
+                    }
                 }
             })
             .catch(error => console.log('error', error));
