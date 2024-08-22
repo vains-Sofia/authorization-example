@@ -342,9 +342,33 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 )
                 .build();
 
+        RegisteredClient privateKeyJwtClient1 = RegisteredClient.withId(IdWorker.getIdStr())
+                .clientId("private-key-jwt-client1")
+                .clientSecret("{noop}123456789")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:7000/login/oauth2/code/private-key-client-oidc")
+                .redirectUri("http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html")
+                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scope(OidcScopes.OPENID)
+                .scope(OidcScopes.PROFILE)
+                .clientSettings(
+                        ClientSettings.builder()
+                                .requireAuthorizationConsent(true)
+                                .jwkSetUrl("http://127.0.0.1:7000/jwkSet")
+                                .tokenEndpointAuthenticationSigningAlgorithm(SignatureAlgorithm.RS256)
+                                .build()
+                )
+                .build();
+
         // 初始化客户端
         this.save(registeredClient);
         this.save(privateKeyJwtClient);
+        this.save(privateKeyJwtClient1);
         this.save(deviceClient);
         this.save(pkceClient);
         this.save(opaqueClient);

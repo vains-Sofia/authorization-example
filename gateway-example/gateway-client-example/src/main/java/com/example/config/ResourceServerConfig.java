@@ -1,5 +1,8 @@
 package com.example.config;
 
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.RSAKey;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -8,6 +11,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.client.endpoint.NimbusJwtClientAuthenticationParametersConverter;
+import org.springframework.security.oauth2.client.endpoint.WebClientReactiveAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -15,15 +22,20 @@ import org.springframework.security.oauth2.server.resource.authentication.Reacti
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.function.Function;
+
 /**
  * 资源服务器配置
  *
  * @author vains
  */
 @EnableWebFluxSecurity
+@RequiredArgsConstructor
 @EnableReactiveMethodSecurity
 @Configuration(proxyBeanMethods = false)
 public class ResourceServerConfig {
+
+    private final RSAKey rsaKey;
 
     /**
      * 配置认证相关的过滤器链
@@ -39,6 +51,7 @@ public class ResourceServerConfig {
 
         // 开启全局验证
         http.authorizeExchange((authorize) -> authorize
+                .pathMatchers("/jwkSet").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 //全部需要认证
                 .anyExchange().authenticated()
@@ -74,6 +87,23 @@ public class ResourceServerConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
+    }
+
+    @Bean
+    public WebClientReactiveAuthorizationCodeTokenResponseClient tokenResponseClient() {
+        Function<ClientRegistration, JWK> jwkResolver = (clientRegistration) -> {
+            if (clientRegistration.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.PRIVATE_KEY_JWT)) {
+                // Assuming RSA key type
+                return rsaKey;
+            }
+            return null;
+        };
+
+        WebClientReactiveAuthorizationCodeTokenResponseClient tokenResponseClient =
+                new WebClientReactiveAuthorizationCodeTokenResponseClient();
+        tokenResponseClient.addParametersConverter(
+                new NimbusJwtClientAuthenticationParametersConverter<>(jwkResolver));
+        return tokenResponseClient;
     }
 
 }
