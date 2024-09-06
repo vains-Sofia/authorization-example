@@ -24,7 +24,7 @@ import org.springframework.security.jackson2.CoreJackson2Module;
  */
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP, keyspaceNotificationsConfigParameter = "")
 public class RedisConfig {
 
     private final Jackson2ObjectMapperBuilder builder;
