@@ -96,10 +96,10 @@
             <version>${velocity.version}</version>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-core</artifactId>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
