@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录示例项目</title>
+    <link rel="stylesheet" href="./assets/css/index-page.css" type="text/css"/>
+</head>
+<body>
+<div class="nav-bar">
+    <h1>OAuth2 登录示例</h1>
+</div>
+<div class="card-container">
+    <div class="card" onclick="assignUri('/callback/oauth-redirect.html')">
+        <div class="card-content">
+            <h2>授权码模式</h2>
+            <p>展示标准授权码模式获取access token流程</p>
+        </div>
+    </div>
+    <div class="card" onclick="assignUri('/callback/pkce-redirect.html')">
+        <div class="card-content">
+            <h2>PKCE模式</h2>
+            <p>展示PKCE模式(授权码模式的扩展)获取access token流程</p>
+        </div>
+    </div>
+    <div class="card" onclick="assignUri('/callback/opaque-redirect.html')">
+        <div class="card-content">
+            <h2>opaque token</h2>
+            <p>使用客户端token设置token类型为opaque token(匿名token)的客户端获取access token</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content" onclick="assignUri('/login')">
+            <h2>登录页面</h2>
+            <p>跳转至登录页面</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    function assignUri(uri) {
+        window.location.assign(uri);
+    }
+</script>

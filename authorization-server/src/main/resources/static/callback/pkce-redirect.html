@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth 2.1 PKCE 回调页面</title>
+  <style>
+    .container {
+      text-align: center;
+    }
+
+    .home-button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .home-button:hover {
+      background-color: #0056b3;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .home-button:active {
+      background-color: #004085;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>OAuth 2.1 PKCE 回调页面</h1>
+  <p><strong>Authorization Code:</strong> <span id="code">Loading...</span></p>
+  <p><strong>Access Token:</strong> <span id="token">Loading...</span></p>
+  <p><a href="/index.html" class="home-button">返回首页</a></p>
+</div>
+<script>
+  // token endpoint
+  const TOKEN_ENDPOINT = 'http://127.0.0.1:8080/oauth2/token';
+  // const TOKEN_ENDPOINT = 'https://calm-lory-vains-0ca1b4e1.koyeb.app/oauth2/token';
+  // authorization endpoint
+  const AUTHORIZATION_ENDPOINT = 'http://127.0.0.1:8080/oauth2/authorize';
+  // const AUTHORIZATION_ENDPOINT = 'https://calm-lory-vains-0ca1b4e1.koyeb.app/oauth2/authorize';
+  // client ID
+  const CLIENT_ID = 'pkce-message-client';
+  // redirect URI
+  const REDIRECT_URI = 'http://127.0.0.1:8080/callback/pkce-redirect.html';
+  // const REDIRECT_URI = 'https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/pkce-redirect.html';
+  // SCOPES
+  const SCOPES = 'message.read message.write';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const queryParams = new URLSearchParams(window.location.search);
+    const authorizationCode = queryParams.get('code');
+    const stateFromUrl = queryParams.get('state');
+    const storedState = localStorage.getItem('oauth_state');
+    const storedCodeVerifier = localStorage.getItem('code_verifier');
+
+    if (!authorizationCode) {
+      redirectToAuthorizationEndpoint();
+    } else if (stateFromUrl !== storedState) {
+      document.getElementById('code').textContent = 'Invalid or missing state parameter.';
+    } else {
+      document.getElementById('code').textContent = authorizationCode;
+      exchangeCodeForToken(authorizationCode, storedCodeVerifier, stateFromUrl);
+    }
+  });
+
+  async function redirectToAuthorizationEndpoint() {
+    const authorizationEndpoint = AUTHORIZATION_ENDPOINT; // Replace with your authorization endpoint
+    const clientId = CLIENT_ID; // Replace with your client ID
+    const redirectUri = encodeURIComponent(REDIRECT_URI); // Replace with your redirect URI
+    const responseType = 'code'; // Authorization code grant
+    const scope = encodeURIComponent(SCOPES); // Replace with your scopes, if any
+
+    // Generate code verifier and code challenge
+    const codeVerifier = generateCodeVerifier();
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+    // Store code verifier and state in localStorage
+    localStorage.setItem('code_verifier', codeVerifier);
+    const state = generateRandomState();
+    localStorage.setItem('oauth_state', state);
+
+    const authUrl = `${authorizationEndpoint}?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+    window.location.href = authUrl;
+  }
+
+  function generateCodeVerifier() {
+    // Generate a random string as code verifier
+    return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+            .map(b => String.fromCharCode(b))
+            .join('')
+            .replace(/[^\w]/g, '');
+  }
+
+  function generateCodeChallenge(codeVerifier) {
+    // Create SHA-256 hash of code verifier and encode as base64
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
+            .then(hash => {
+              let base64 = btoa(String.fromCharCode(...new Uint8Array(hash)));
+              return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            });
+  }
+
+  function generateRandomState() {
+    // Generate a random string as state parameter
+    return btoa(Math.random().toString()).substring(0, 16);
+  }
+
+  function exchangeCodeForToken(code, codeVerifier, state) {
+    const redirectUri = REDIRECT_URI; // Replace with your redirect URI
+    const tokenEndpoint = TOKEN_ENDPOINT; // Replace with your token endpoint
+
+    const formData = new FormData();
+    formData.append('grant_type', 'authorization_code');
+    formData.append('code', code);
+    formData.append('client_id', CLIENT_ID);
+    formData.append('redirect_uri', redirectUri);
+    formData.append('code_verifier', codeVerifier);
+    formData.append('state', state);
+
+    fetch(tokenEndpoint, {
+      method: 'POST',
+      body: formData
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.access_token) {
+                document.getElementById('token').textContent = `${JSON.stringify(data)}`;
+              } else {
+                document.getElementById('token').textContent = `Error: ${JSON.stringify(data)}`;
+              }
+            })
+            .catch(error => {
+              console.error('Error exchanging authorization code for token:', error);
+              document.getElementById('token').textContent = 'Error exchanging authorization code for token.';
+            });
+  }
+</script>
+</body>
+</html>

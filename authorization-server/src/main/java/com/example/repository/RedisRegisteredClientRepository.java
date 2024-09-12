@@ -239,6 +239,8 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8080/callback/oauth-redirect.html")
+                .redirectUri("https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/oauth-redirect.html")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
                 .scope(OidcScopes.OPENID)
@@ -271,6 +273,8 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
+                .redirectUri("http://127.0.0.1:8080/callback/opaque-redirect.html")
+                .redirectUri("https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/opaque-redirect.html")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
@@ -313,6 +317,8 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
                 .redirectUri("https://flow-cloud.love/PkceRedirect")
                 .redirectUri("https://authorization-example.vercel.app/PkceRedirect")
+                .redirectUri("http://127.0.0.1:8080/callback/pkce-redirect.html")
+                .redirectUri("https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/pkce-redirect.html")
                 // 开启 PKCE 流程
                 .clientSettings(builder.requireProofKey(Boolean.TRUE).build())
                 // 指定scope
