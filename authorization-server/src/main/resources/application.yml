@@ -90,12 +90,21 @@ custom:
   # 自定义认证配置
   security:
     # 授权确认页面路径
-    consent-page-uri: /oauth2/consent
+    consent-page-uri: https://drab-shelby-leisure-7d447dec.koyeb.app/consent
     # 设备码验证页面
-    device-activate-uri: /activate
+    device-activate-uri: https://drab-shelby-leisure-7d447dec.koyeb.app/activate
     # 设备码验证成功页面
-    device-activated-uri: /activated
+    device-activated-uri: https://drab-shelby-leisure-7d447dec.koyeb.app/activated
     # 不需要认证的地址
     ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha, /error, /oauth2/consent/parameters, /test03, /favicon.ico, /qrCode/login/**, /index.html, /callback/**
     # 当前认证服务访问的路径
     issuer-url: https://calm-lory-vains-0ca1b4e1.koyeb.app
+    # 登录页面
+    login-url: https://drab-shelby-leisure-7d447dec.koyeb.app/login
+
+server:
+  servlet:
+    session:
+      cookie:
+        # 这里设置顶级域名
+        domain: koyeb.app

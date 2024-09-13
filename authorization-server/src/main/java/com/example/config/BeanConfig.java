@@ -37,6 +37,7 @@ public class BeanConfig {
         configuration.addAllowedOrigin("https://j1zr8ren8w.51xd.pub");
         configuration.addAllowedOrigin("https://authorization-example.vercel.app");
         configuration.addAllowedOrigin("https://calm-lory-vains-0ca1b4e1.koyeb.app");
+        configuration.addAllowedOrigin("https://drab-shelby-leisure-7d447dec.koyeb.app");
         // 设置跨域访问可以携带cookie
         configuration.setAllowCredentials(true);
         // 允许所有的请求方法 ==> GET POST PUT Delete
