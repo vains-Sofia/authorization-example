@@ -239,6 +239,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
+                .redirectUri("https://drab-shelby-leisure-7d447dec.koyeb.app/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8080/callback/oauth-redirect.html")
                 .redirectUri("https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/oauth-redirect.html")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
@@ -317,6 +318,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
                 .redirectUri("https://flow-cloud.love/PkceRedirect")
                 .redirectUri("https://authorization-example.vercel.app/PkceRedirect")
+                .redirectUri("https://drab-shelby-leisure-7d447dec.koyeb.app/PkceRedirect")
                 .redirectUri("http://127.0.0.1:8080/callback/pkce-redirect.html")
                 .redirectUri("https://calm-lory-vains-0ca1b4e1.koyeb.app/callback/pkce-redirect.html")
                 // 开启 PKCE 流程
