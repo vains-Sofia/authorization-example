@@ -108,3 +108,9 @@ server:
       cookie:
         # 这里设置顶级域名
         domain: koyeb.app
+
+  # 本地开发时移除下边配置
+  tomcat:
+    remoteip:
+      protocol-header: host
+      protocol-header-https-value: calm-lory-vains-0ca1b4e1.koyeb.app
