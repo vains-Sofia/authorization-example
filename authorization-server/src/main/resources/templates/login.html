@@ -163,7 +163,7 @@ Invalid username or password.
             redirect: 'follow'
         };
 
-        fetch(`${window.location.origin}/getCaptcha`, requestOptions)
+        fetch(`${window.location.origin}/getCaptcha1`, requestOptions)
             .then(response => response.text())
             .then(r => {
                 if (r) {
@@ -247,7 +247,8 @@ Invalid username or password.
 
     let error = [[${ error }]]
     if (error) {
-        if (window.Notification) {
+        showError(error);
+        /*if (window.Notification) {
             Notification.requestPermission(function () {
                 if (Notification.permission === 'granted') {
                     // 用户点击了允许
@@ -263,6 +264,6 @@ Invalid username or password.
                     showError(error);
                 }
             })
-        }
+        }*/
     }
 </script>
