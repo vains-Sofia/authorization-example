@@ -15,7 +15,7 @@ import {
 import { getAccessToken, getUserinfo } from "@/api/user";
 import { message } from "@/utils/message";
 
-const oAuthClinet: OAuthClientInfo = {
+const oAuthClient: OAuthClientInfo = {
   grantType: "authorization_code",
   scopes: ["openid", "profile", "message.read", "message.write"],
   clientId: import.meta.env.VITE_OAUTH_CLIENT_ID,
@@ -36,7 +36,7 @@ if (code) {
     message("state校验失败.");
   } else {
     // 请求access_token
-    getAccessToken(oAuthClinet, code, state)
+    getAccessToken(oAuthClient, code, state)
       .then((res: any) => {
         let dataInfo: DataInfo<number> = {
           accessToken: res.access_token,
@@ -74,7 +74,7 @@ if (code) {
       );
   }
 } else {
-  window.location.href = buildAuthorizeUri(oAuthClinet);
+  window.location.href = buildAuthorizeUri(oAuthClient);
 }
 </script>
 

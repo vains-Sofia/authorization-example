@@ -8,8 +8,8 @@ Spring OAuth2 Authorization Server集成与拓展项目，包括认证服务搭�
 
 [Wiki](https://gitee.com/vains-Sofia/authorization-example/wikis/pages)
 
-## 登录流程演示地址(无法访问请尝试科学上网)
-[演示地址](https://drab-shelby-leisure-7d447dec.koyeb.app)
+## 登录流程演示地址
+[演示地址](https://j1zr8ren8w.51xd.pub)
 
 ## 交流群
 [724141959](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=TJ6P1zOGofljK4xxnRrmn_3p42V995OD&authKey=h3YWSUIJXL23m34ATDfWlYa61UQRyBRxBpoMnDGoU%2BJKKfcHWGYMZC9bAJ%2FZ69Ax&noverify=0&group_code=724141959)
