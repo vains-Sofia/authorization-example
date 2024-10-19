@@ -237,6 +237,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/demonstrate/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
@@ -270,6 +271,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("http://127.0.0.1:5173/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/demonstrate/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
                 .scope(OidcScopes.OPENID)
@@ -311,6 +313,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 // 授权码模式回调地址，oauth2.1已改为精准匹配，不能只设置域名，并且屏蔽了localhost，本机使用127.0.0.1访问
                 .redirectUri("http://127.0.0.1:5173/PkceRedirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
+                .redirectUri("https://j1zr8ren8w.51xd.pub/demonstrate/PkceRedirect")
                 .redirectUri("https://flow-cloud.love/PkceRedirect")
                 .redirectUri("https://authorization-example.vercel.app/PkceRedirect")
                 // 开启 PKCE 流程
