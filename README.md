@@ -1,3 +1,6 @@
+# 现在仓库代码和文章有出入，新整理的仓库地址如下
+[authorization-example-new](https://gitee.com/vains-Sofia/authorization-example-new)
+
 # Spring oauth2 authorization server示例项目
 
 ## 项目说明
