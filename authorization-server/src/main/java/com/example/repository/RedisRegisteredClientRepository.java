@@ -239,6 +239,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/OAuth2Redirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/demonstrate/OAuth2Redirect")
                 .redirectUri("https://flow-cloud.love/OAuth2Redirect")
+                .redirectUri("https://show.sas.waitylyou.com/OAuth2Redirect")
                 .redirectUri("https://authorization-example.vercel.app/OAuth2Redirect")
                 .redirectUri("http://127.0.0.1:8000/login/oauth2/code/messaging-client-oidc")
                 // 该客户端的授权范围，OPENID与PROFILE是IdToken的scope，获取授权时请求OPENID的scope时认证服务会返回IdToken
@@ -315,6 +316,7 @@ public class RedisRegisteredClientRepository implements RegisteredClientReposito
                 .redirectUri("https://j1zr8ren8w.51xd.pub/PkceRedirect")
                 .redirectUri("https://j1zr8ren8w.51xd.pub/demonstrate/PkceRedirect")
                 .redirectUri("https://flow-cloud.love/PkceRedirect")
+                .redirectUri("https://show.sas.waitylyou.com/PkceRedirect")
                 .redirectUri("https://authorization-example.vercel.app/PkceRedirect")
                 // 开启 PKCE 流程
                 .clientSettings(builder.requireProofKey(Boolean.TRUE).build())
